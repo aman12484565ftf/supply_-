@@ -5,7 +5,10 @@ const { io } = require("../server"); // Import WebSocket instance
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
 const sendEmail = require("../utils/sendEmail");
-
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
+const generateInvoice = require("../utils/generateInvoice");
 // Order Status Constants
 const ORDER_STATUSES = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
@@ -66,6 +69,52 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
+
+const createInvoice = async (req, res) => {
+  try {
+    
+    // ✅ Fetch order from DB and populate customer & product details
+    // const { orderId} = req.body;
+    console.log("Received full URL:", req.originalUrl); // ✅ Log full request URL
+    console.log("Received request params:", req.params);
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Missing orderId in URL" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid order ID format" });
+    }
+
+    console.log("Received orderId:", req.body.id);
+    const order = await Order.findById(id)
+      .populate("customer", "name email") // Fetch customer details
+      .populate("items.product", "name price"); // Fetch product details
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // ✅ Ensure invoices directory exists
+    const invoiceDir = path.join(__dirname, "../invoices");
+    if (!fs.existsSync(invoiceDir)) {
+      fs.mkdirSync(invoiceDir, { recursive: true });
+    }
+
+    const filePath = path.join(invoiceDir, `invoice_${order._id}.pdf`);
+    
+    await generateInvoice(order, filePath);
+
+    res.status(200).json({ message: "Invoice generated successfully", filePath });
+  } catch (error) {
+    console.error("Invoice generation error:", error);
+    res.status(500).json({
+      message: "Error generating invoice",
+      error: error.message || error,
+    });
+  }
+};
 
 // 📌 Get user orders
 const getUserOrders = asyncHandler(async (req, res) => {
@@ -349,4 +398,38 @@ const confirmDelivery = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
+// const createInvoice = async (req, res) => {
+//   try {
+    
+//     // ✅ Fetch order from DB and populate customer & product details
+//     const { orderId} = req.body;
+//     console.log("Received orderId:", req.body.orderId);
+//     const order = await Order.findById(orderId)
+//       .populate("customer", "name email") // Fetch customer details
+//       .populate("items.product", "name price"); // Fetch product details
+
+//     if (!order) {
+//       return res.status(404).json({ message: "Order not found" });
+//     }
+
+//     // ✅ Ensure invoices directory exists
+//     const invoiceDir = path.join(__dirname, "../invoices");
+//     if (!fs.existsSync(invoiceDir)) {
+//       fs.mkdirSync(invoiceDir, { recursive: true });
+//     }
+
+//     const filePath = path.join(invoiceDir, `invoice_${order._id}.pdf`);
+    
+//     await generateInvoice(order, filePath);
+
+//     res.status(200).json({ message: "Invoice generated successfully", filePath });
+//   } catch (error) {
+//     console.error("Invoice generation error:", error);
+//     res.status(500).json({
+//       message: "Error generating invoice",
+//       error: error.message || error,
+//     });
+//   }
+// };
+
+module.exports = { createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
