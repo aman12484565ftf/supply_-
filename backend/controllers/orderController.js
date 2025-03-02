@@ -136,31 +136,31 @@ const createOrder = asyncHandler(async (req, res) => {
 
 const createInvoice = async (req, res) => {
   try {
-    
-    // ✅ Fetch order from DB and populate customer & product details
-    // const { orderId} = req.body;
-    console.log("Received full URL:", req.originalUrl); // ✅ Log full request URL
+    console.log("Received full URL:", req.originalUrl);
     console.log("Received request params:", req.params);
-    const { id } = req.params;
 
-    if (!id) {
+    const { id: orderId } = req.params; // Extract orderId from URL params
+
+    if (!orderId) {
       return res.status(400).json({ message: "Missing orderId in URL" });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({ message: "Invalid order ID format" });
     }
 
-    console.log("Received orderId:", req.body.id);
-    const order = await Order.findById(id)
-      .populate("customer", "name email") // Fetch customer details
-      .populate("items.product", "name price"); // Fetch product details
+    console.log("Processing orderId:", orderId);
+
+    // ✅ Fetch order from DB with populated customer & product details
+    const order = await Order.findById(orderId)
+      .populate("customer", "name email")
+      .populate("items.product", "name price");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // ✅ Ensure invoices directory exists
+    // ✅ Ensure `invoices/` directory exists
     const invoiceDir = path.join(__dirname, "../invoices");
     if (!fs.existsSync(invoiceDir)) {
       fs.mkdirSync(invoiceDir, { recursive: true });
@@ -168,9 +168,21 @@ const createInvoice = async (req, res) => {
 
     const filePath = path.join(invoiceDir, `invoice_${order._id}.pdf`);
     
+    console.log(`Generating invoice at: ${filePath}`);
     await generateInvoice(order, filePath);
 
-    res.status(200).json({ message: "Invoice generated successfully", filePath });
+    const customerEmail = order.customer?.email;
+    if (!customerEmail) {
+      return res.status(400).json({ message: "Customer email not found." });
+    }
+
+    const emailSubject = `Your Invoice for Order #${order._id}`;
+    const emailBody = `Hello ${order.customer.name},\n\nPlease find attached your invoice for Order #${order._id}.\n\nThank you for your purchase!`;
+
+    console.log(`Sending email to: ${customerEmail}`);
+    await sendEmail(customerEmail, emailSubject, emailBody, filePath);
+
+    res.status(200).json({ message: "Invoice generated and sent successfully", filePath });
   } catch (error) {
     console.error("Invoice generation error:", error);
     res.status(500).json({
@@ -480,39 +492,5 @@ const getOrderByTrackingId = asyncHandler(async (req, res) => {
     qrCode: order.qrCode, // Return QR Code data
   });
 });
-
-// const createInvoice = async (req, res) => {
-//   try {
-    
-//     // ✅ Fetch order from DB and populate customer & product details
-//     const { orderId} = req.body;
-//     console.log("Received orderId:", req.body.orderId);
-//     const order = await Order.findById(orderId)
-//       .populate("customer", "name email") // Fetch customer details
-//       .populate("items.product", "name price"); // Fetch product details
-
-//     if (!order) {
-//       return res.status(404).json({ message: "Order not found" });
-//     }
-
-//     // ✅ Ensure invoices directory exists
-//     const invoiceDir = path.join(__dirname, "../invoices");
-//     if (!fs.existsSync(invoiceDir)) {
-//       fs.mkdirSync(invoiceDir, { recursive: true });
-//     }
-
-//     const filePath = path.join(invoiceDir, `invoice_${order._id}.pdf`);
-    
-//     await generateInvoice(order, filePath);
-
-//     res.status(200).json({ message: "Invoice generated successfully", filePath });
-//   } catch (error) {
-//     console.error("Invoice generation error:", error);
-//     res.status(500).json({
-//       message: "Error generating invoice",
-//       error: error.message || error,
-//     });
-//   }
-// };
 
 module.exports = { getOrderByTrackingId,createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };

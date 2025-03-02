@@ -41,5 +41,5 @@ router.put("/driver/update/:orderId", protect, authorize("driver"), updateDelive
 router.post("/confirm-delivery", protect, confirmDelivery);
 
 router.get("/track/:trackingId", getOrderByTrackingId);
-
+router.get("/invoice/send/:orderId", createInvoice);
 module.exports = router;
