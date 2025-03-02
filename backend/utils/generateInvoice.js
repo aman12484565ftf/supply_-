@@ -88,17 +88,30 @@ const generateInvoice = (order, filePath) => {
       .fontSize(12)
       .text(`Payment Mode: ${order.paymentMode || "N/A"}`)
       .text(`Payment Status: ${order.paymentStatus || "Unpaid"}`);
+    // ✅ Embed QR Code
+    // ✅ Convert Base64 QR Code to Image & Embed in PDF
+    const qrCodeDir = path.join(__dirname, "../qrcodes");
+    if (!fs.existsSync(qrCodeDir)) {
+      fs.mkdirSync(qrCodeDir, { recursive: true }); // 🔥 Create folder if it doesn't exist
+    }
+    if (order.qrCode) {
+      doc.moveDown(2);
+      doc.fontSize(12).text("Scan this QR Code to track your order:", { align: "center" });
 
+      try {
+        const qrCodeBuffer = Buffer.from(order.qrCode.split(",")[1], "base64");
+        const qrCodePath = path.join(qrCodeDir, `qr_${order._id}.png`); 
+
+        fs.writeFileSync(qrCodePath, qrCodeBuffer);
+        doc.image(qrCodePath, { align: "center", width: 150 });
+      } catch (error) {
+        console.error("Error embedding QR Code:", error);
+      }
+    }
+
+      
     // ✅ Footer - Company Note
-    doc
-      .moveDown()
-      .fontSize(10)
-      .fillColor("#888888")
-      .text(
-        "Thank you for your business! If you have any questions about this invoice, please contact us.",
-        { align: "center" }
-      );
-
+    
     doc.end();
     stream.on("finish", () => resolve(filePath));
     stream.on("error", reject);

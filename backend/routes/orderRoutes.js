@@ -10,7 +10,8 @@ const {
   confirmDelivery,
   getDriverOrders,
   assignDriver,
-  createInvoice
+  createInvoice,
+  getOrderByTrackingId
 } = require("../controllers/orderController");
 
 const router = express.Router();
@@ -39,5 +40,6 @@ router.put("/driver/update/:orderId", protect, authorize("driver"), updateDelive
 
 router.post("/confirm-delivery", protect, confirmDelivery);
 
+router.get("/track/:trackingId", getOrderByTrackingId);
 
 module.exports = router;

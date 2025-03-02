@@ -45,7 +45,7 @@ const orderSchema = new mongoose.Schema(
     paymentMode: {
       type: String,
       enum: ["Online", "COD"],
-      required: true,
+      // required: true,
     },
     paymentStatus: {
       type: String,
@@ -67,6 +67,9 @@ const orderSchema = new mongoose.Schema(
     deliveryConfirmation: {
       type: String, // Store OTP or signature
       required: false,
+    },
+    qrCode: {
+      type: String, // Store the QR code URL as a string
     },
   },
   { timestamps: true }

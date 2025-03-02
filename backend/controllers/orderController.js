@@ -7,6 +7,7 @@ const Product = require("../models/productModel");
 const sendEmail = require("../utils/sendEmail");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const QRCode = require("qrcode");
 const path = require('path');
 const generateInvoice = require("../utils/generateInvoice");
 // Order Status Constants
@@ -15,6 +16,7 @@ const ORDER_STATUSES = ["Pending", "Processing", "Shipped", "Delivered", "Cancel
 // 📌 Create Order with Atomic Transactions
 const createOrder = asyncHandler(async (req, res) => {
   const { items, totalAmount, shippingAddress } = req.body;
+  
   if (!items || items.length === 0) {
     res.status(400);
     throw new Error("Order must include at least one product.");
@@ -25,7 +27,11 @@ const createOrder = asyncHandler(async (req, res) => {
 
   try {
     const trackingId = uuidv4();
+    const trackingUrl = `http://localhost:5000/api/orders/track/${trackingId}`; // Replace with real domain
 
+    // Generate QR Code for Tracking
+    const qrCodeData = await QRCode.toDataURL(trackingUrl);
+    // console.log("Generated QR Code:", qrCodeData);
     for (const item of items) {
       const product = await Product.findById(item.product).session(session);
 
@@ -54,9 +60,11 @@ const createOrder = asyncHandler(async (req, res) => {
       shippingAddress,
       orderStatus: "Pending",
       trackingId,
+      qrCode: qrCodeData, // Store QR Code in order
     });
 
     const createdOrder = await order.save({ session });
+    // console.log("Generated QR Code:", order.qrCode);
 
     await session.commitTransaction();
     session.endSession();
@@ -69,6 +77,62 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
+// const createOrder = asyncHandler(async (req, res) => {
+//   const { items, totalAmount, shippingAddress } = req.body;
+//   if (!items || items.length === 0) {
+//     res.status(400);
+//     throw new Error("Order must include at least one product.");
+//   }
+
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+
+//   try {
+//     const trackingId = uuidv4();
+
+//     for (const item of items) {
+//       const product = await Product.findById(item.product).session(session);
+
+//       if (!product) throw new Error(`Product not found: ${item.product}`);
+//       if (product.stock < item.quantity) throw new Error(`Insufficient stock for: ${product.name}`);
+
+//       // Reduce stock and save
+//       product.stock -= item.quantity;
+//       await product.save({ session });
+
+//       // Send stock alert if low
+//       if (product.stock <= product.lowStockThreshold) {
+//         await sendEmail(
+//           process.env.ADMIN_EMAIL,
+//           "Stock Alert: Replenishment Needed",
+//           `The stock for ${product.name} is low (Remaining: ${product.stock}). Please restock it.`
+//         );
+//       }
+//     }
+
+//     // Create Order
+//     const order = new Order({
+//       customer: req.user._id,
+//       items,
+//       totalAmount,
+//       shippingAddress,
+//       orderStatus: "Pending",
+//       trackingId,
+//     });
+
+//     const createdOrder = await order.save({ session });
+
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     res.status(201).json(createdOrder);
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     res.status(400);
+//     throw new Error(error.message);
+//   }
+// });
 
 const createInvoice = async (req, res) => {
   try {
@@ -397,6 +461,25 @@ const confirmDelivery = asyncHandler(async (req, res) => {
   res.json({ message: "Delivery confirmed successfully", order });
 });
 
+const getOrderByTrackingId = asyncHandler(async (req, res) => {
+  const { trackingId } = req.params;
+
+  const order = await Order.findOne({ trackingId })
+    .populate("customer", "name email")
+    .populate("items.product", "name price");
+
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found.");
+  }
+
+  res.json({
+    orderId: order._id,
+    trackingId: order.trackingId,
+    status: order.orderStatus,
+    qrCode: order.qrCode, // Return QR Code data
+  });
+});
 
 // const createInvoice = async (req, res) => {
 //   try {
@@ -432,4 +515,4 @@ const confirmDelivery = asyncHandler(async (req, res) => {
 //   }
 // };
 
-module.exports = { createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
+module.exports = { getOrderByTrackingId,createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
