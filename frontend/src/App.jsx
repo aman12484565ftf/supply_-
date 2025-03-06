@@ -9,7 +9,8 @@ import RoleBasedRoute from "./components/RoleBasedRoute";
 import InventoryDashboard from "./pages/InventoryDashboard";
 import OrderDashboard from "./pages/OrderDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
-
+import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerOrders from "./pages/CustomerOrder";
 function App() {
   const { user } = useSelector((state) => state.auth);
   
@@ -26,10 +27,16 @@ function App() {
           <Route path="/dashboard" element={
             user?.role === "admin" ? <Dashboard /> :
             user?.role === "driver" ? <DriverDashboard /> :
+            user?.role === "customer" ? <CustomerDashboard /> :
             <Dashboard />
           } />
           <Route path="/inventory" element={<InventoryDashboard />} />
           <Route path="/orders" element={<OrderDashboard />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
+          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+          <Route path="/customer/order" element={<CustomerOrders />} />  {/* ✅ Fix this route */}
         </Route>
       </Routes>
     </div>

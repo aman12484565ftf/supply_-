@@ -4,6 +4,8 @@ import authReducer from "./auth/authSlice"; // Ensure this path is correct
 import inventoryReducer from "./inventory/inventorySlice";
 import orderReducer from "./orders/orderSlice";
 import driverReducer from "./driver/driverSlice";
+import customerReducer from "./customer/customerSlice";
+import productReducer from "./products/productSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ const store = configureStore({
     inventory: inventoryReducer,
     orders: orderReducer,
     driver: driverReducer,
+    customer: customerReducer,
+    products: productReducer,
   },
 });
 

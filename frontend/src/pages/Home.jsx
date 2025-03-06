@@ -18,7 +18,7 @@ const Home = () => {
       {/* Hero Section with Parallax Effect */}
       <section className="relative h-screen flex items-center justify-center bg-cover bg-center bg-[url('/images/hero-bg.jpg')] overflow-hidden">
         <div 
-          className="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-indigo-900/70"
+          className="absolute inset-0 bg-gradient-to-r from-blue-900 to-indigo-900"
           style={{ transform: `translateY(${scrollY * 0.2}px)` }}
         ></div>
         <div 
@@ -49,12 +49,12 @@ const Home = () => {
             >
               Get Started
             </a>
-            <a 
+            {/* <a 
               href="/track" 
               className="px-8 py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/30 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1"
             >
               Track Shipment
-            </a>
+            </a> */}
           </div>
         </div>
         

@@ -30,7 +30,18 @@ export const cancelOrder = createAsyncThunk("orders/cancelOrder", async ({ order
     return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
   }
 });
-
+export const placeOrder = createAsyncThunk("orders/placeOrder", async (orderData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user?.token;
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      
+      const response = await axios.post("/api/orders", orderData, config);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to place order");
+    }
+  });
+  
 // 🎯 Initial State
 const initialState = {
   orders: [],
@@ -65,6 +76,18 @@ const orderSlice = createSlice({
         state.orders = state.orders.map(order =>
           order._id === action.payload._id ? action.payload : order
         );
+      })
+      .addCase(placeOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(placeOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.order = action.payload;
+      })
+      .addCase(placeOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
