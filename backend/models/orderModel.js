@@ -26,8 +26,8 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
-      default: "Pending",
+      enum: ["Processing","Pending","Shipped", "Delivered","Cancelled"], 
+      default: "Processing",
     },
     assignedDriver: {
       type: mongoose.Schema.Types.ObjectId,
@@ -56,7 +56,7 @@ const orderSchema = new mongoose.Schema(
       type: String, // Stores online payment transaction ID
     },
     refund: {
-      status: { type: String, enum: ["Pending", "Processed", "Failed"], default: "Pending" },
+      status: { type: String, enum: ["Processing", "Pending", "Refunded"], default: "Pending" },
       refundId: { type: String }, // Stores refund transaction ID
       refundAmount: { type: Number },
       refundDate: { type: Date },

@@ -11,16 +11,20 @@ const {
   getDriverOrders,
   assignDriver,
   createInvoice,
-  getOrderByTrackingId
+  getOrderByTrackingId,
+  getAllOrders
 } = require("../controllers/orderController");
 
 const router = express.Router();
 
 router.post("/", protect, createOrder);
+router.get("/", protect, authorize("admin", "warehouseManager"), getAllOrders);
 
 router.get("/user", protect, getUserOrders);
 
-router.put("/:id/cancel", protect, cancelOrder);
+// router.put("/:id/cancel", protect, cancelOrder);
+router.put("/:id/cancel", protect, authorize("admin", "customer"), cancelOrder);
+
 // Admins & Warehouse Managers can update order status (including cancellations)
 router.put("/:id", protect, authorize("admin", "warehouseManager"), updateOrderStatus);
 router.get("/invoice/:id", protect, createInvoice);

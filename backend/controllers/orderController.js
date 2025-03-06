@@ -192,6 +192,19 @@ const createInvoice = async (req, res) => {
   }
 };
 
+const getAllOrders = asyncHandler(async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("customer", "name email") // Include customer details
+      .populate("items.product", "name price"); // Include product details
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("❌ Error fetching orders:", error);
+    res.status(500).json({ message: "Error fetching orders" });
+  }
+});
+
 // 📌 Get user orders
 const getUserOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({ customer: req.user._id }).sort("-createdAt");
@@ -199,70 +212,24 @@ const getUserOrders = asyncHandler(async (req, res) => {
 });
 
 // 📌 Update Order Status (Including Cancellation & Stock Restoration)
+
 const updateOrderStatus = asyncHandler(async (req, res) => {
-  const { status } = req.body;
-  const order = await Order.findById(req.params.id).populate("items.product");
+  const { status } = req.body; // ✅ Ensure request contains `status`
+  
+  if (!status) {
+    return res.status(400).json({ message: "Order status is required." });
+  }
 
+  const order = await Order.findById(req.params.id);
+  
   if (!order) {
-    res.status(404);
-    throw new Error("Order not found.");
+    return res.status(404).json({ message: "Order not found." });
   }
 
-  if (!ORDER_STATUSES.includes(status)) {
-    res.status(400);
-    throw new Error("Invalid order status.");
-  }
-
-  if (order.orderStatus === "Delivered") {
-    res.status(400);
-    throw new Error("Cannot update status of a delivered order.");
-  }
-
-  // If cancelling an order, restore stock
-  if (status === "Cancelled" && order.orderStatus !== "Cancelled") {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      for (const item of order.items) {
-        const product = await Product.findById(item.product._id).session(session);
-        if (product) {
-          product.stock += item.quantity;
-          await product.save({ session });
-        }
-      }
-
-      order.orderStatus = "Cancelled";
-      await order.save({ session });
-
-      await session.commitTransaction();
-      session.endSession();
-
-      io.emit("orderStatusUpdated", {
-        orderId: order._id,
-        status: "Cancelled",
-        message: "Order has been cancelled, and stock has been restored.",
-      });
-
-      return res.json({ message: "Order cancelled successfully and stock restored." });
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      res.status(500);
-      throw new Error("Error cancelling order. Try again.");
-    }
-  }
-
-  // Normal status update
   order.orderStatus = status;
-  const updatedOrder = await order.save();
+  await order.save();
 
-  io.emit("orderStatusUpdated", {
-    orderId: order._id,
-    status: order.orderStatus,
-  });
-
-  res.json(updatedOrder);
+  res.status(200).json({ message: "Order status updated successfully.", order });
 });
 
 // 📌 Update Shipment Status & Notify Clients
@@ -294,93 +261,228 @@ const updateShipmentStatus = asyncHandler(async (req, res) => {
   });
 });
 
-const cancelOrder = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const order = await Order.findById(id).populate("customer", "email name");
+// const cancelOrder = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
+//   const order = await Order.findById(id).populate("customer", "email name");
 
-  if (!order) {
-    res.status(404);
-    throw new Error("Order not found.");
-  }
+//   if (!order) {
+//     res.status(404);
+//     throw new Error("Order not found.");
+//   }
 
-  if (order.orderStatus !== "Pending" && order.orderStatus !== "Processing") {
-    res.status(400);
-    throw new Error("Order cannot be canceled at this stage.");
-  }
+//   if (order.orderStatus !== "Pending" && order.orderStatus !== "Processing") {
+//     res.status(400);
+//     throw new Error("Order cannot be canceled at this stage.");
+//   }
 
-  let refundMessage = "";
-  let refundDetails = {};
+//   let refundMessage = "";
+//   let refundDetails = {};
 
-  // Refund process for online payments
-  if (order.paymentMode === "Online" && order.paymentStatus === "Paid") {
-    try {
-      const refundResponse = await processRefund(order.paymentId, order.totalAmount); // Simulated refund API call
+//   // Refund process for online payments
+//   if (order.paymentMode === "Online" && order.paymentStatus === "Paid") {
+//     try {
+//       const refundResponse = await processRefund(order.paymentId, order.totalAmount); // Simulated refund API call
       
-      refundDetails = {
-        status: "Processed",
-        refundId: refundResponse.refundId,
-        refundAmount: order.totalAmount,
-        refundDate: new Date(),
-      };
+//       refundDetails = {
+//         status: "Processed",
+//         refundId: refundResponse.refundId,
+//         refundAmount: order.totalAmount,
+//         refundDate: new Date(),
+//       };
 
-      order.paymentStatus = "Refunded";
-      order.refund = refundDetails;
-      refundMessage = `Your refund (₹${order.totalAmount}) has been successfully processed. Refund ID: ${refundResponse.refundId}.`;
-    } catch (error) {
-      refundDetails = { status: "Failed", refundAmount: order.totalAmount };
-      order.refund = refundDetails;
-      res.status(500);
-      throw new Error("Failed to process refund. Please try again.");
+//       order.paymentStatus = "Refunded";
+//       order.refund = refundDetails;
+//       refundMessage = `Your refund (₹${order.totalAmount}) has been successfully processed. Refund ID: ${refundResponse.refundId}.`;
+//     } catch (error) {
+//       refundDetails = { status: "Failed", refundAmount: order.totalAmount };
+//       order.refund = refundDetails;
+//       res.status(500);
+//       throw new Error("Failed to process refund. Please try again.");
+//     }
+//   }
+
+//   // Update order status
+//   order.orderStatus = "Canceled";
+//   await order.save();
+
+//   // 📩 **Send email to the customer**
+//   await sendEmail(
+//     order.customer.email,
+//     "Your Order Has Been Canceled",
+//     `
+//       Hi ${order.customer.name},
+
+//       Your order with Tracking ID: ${order.trackingId} has been successfully canceled.
+//       ${refundMessage ? refundMessage : "Since this was a cash-on-delivery order, no refund is required."}
+
+//       If you have any questions, feel free to contact our support.
+
+//       Regards,  
+//       Your Company Name
+//     `
+//   );
+
+//   // 📩 **Send email to the admin**
+//   await sendEmail(
+//     process.env.ADMIN_EMAIL,
+//     "Order Cancellation Alert",
+//     `
+//       Alert! An order has been canceled.
+
+//       Order ID: ${order._id}  
+//       Customer: ${order.customer.name} (${order.customer.email})  
+//       Total Amount: ₹${order.totalAmount}  
+//       Payment Mode: ${order.paymentMode}  
+//       Refund Status: ${refundDetails.status || "N/A"}  
+
+//       Please review the cancellation and update inventory if needed.
+//     `
+//   );
+
+//   // 🔄 **Emit WebSocket event**
+//   io.emit("orderCancelled", {
+//     orderId: order._id,
+//     status: "Canceled",
+//     refundStatus: refundDetails.status || "N/A",
+//   });
+
+//   res.json({ message: "Order canceled successfully. Notifications sent.", order });
+// });
+
+const cancelOrder = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("📢 Cancel Order Request for ID:", id);
+
+    const order = await Order.findById(id).populate("customer", "email name");
+    if (!order) {
+      console.log("❌ Order not found.");
+      return res.status(404).json({ message: "Order not found." });
     }
+
+    console.log("🔹 Current Order Status:", order.orderStatus);
+
+    if (!["Pending", "Processing"].includes(order.orderStatus)) {
+      console.log("❌ Order cannot be cancelled at this stage.");
+      return res.status(400).json({ message: "Order cannot be cancelled at this stage." });
+    }
+
+    let refundMessage = "";
+    let refundDetails = {};
+
+    if (order.paymentMode === "Online" && order.paymentStatus === "Paid") {
+      try {
+        const refundResponse = { refundId: `REF-${Date.now()}` };
+
+        refundDetails = {
+          status: "Processed",
+          refundId: refundResponse.refundId,
+          refundAmount: order.totalAmount,
+          refundDate: new Date(),
+        };
+
+        order.paymentStatus = "Refunded";
+        order.refund = refundDetails;
+        refundMessage = `Refund of ₹${order.totalAmount} processed successfully. Refund ID: ${refundResponse.refundId}.`;
+      } catch (error) {
+        refundDetails = { status: "Failed", refundAmount: order.totalAmount };
+        order.refund = refundDetails;
+        console.log("❌ Refund processing failed:", error);
+        return res.status(500).json({ message: "Failed to process refund. Please try again." });
+      }
+    }
+
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    console.log("✅ Order Cancelled Successfully");
+
+    await sendEmail(
+      order.customer.email,
+      "Order Cancellation Confirmation",
+      `Hi ${order.customer.name},\n\nYour order with Tracking ID: ${order.trackingId} has been successfully cancelled.\n${refundMessage ? refundMessage : "Since this was a cash-on-delivery order, no refund is required."}\n\nIf you have any questions, feel free to contact our support.\n\nBest regards,\nYour Company`
+    );
+
+    await sendEmail(
+      process.env.ADMIN_EMAIL,
+      "Order Cancellation Alert",
+      `Alert! An order has been cancelled.\n\nOrder ID: ${order._id}\nCustomer: ${order.customer.name} (${order.customer.email})\nTotal Amount: ₹${order.totalAmount}\nPayment Mode: ${order.paymentMode}\nRefund Status: ${refundDetails.status || "N/A"}\n\nPlease review the cancellation and update inventory if needed.`
+    );
+
+    res.json({ message: "Order cancelled successfully. Notifications sent.", order });
+  } catch (error) {
+    console.error("❌ Error in cancelOrder:", error);
+    res.status(500).json({ message: "Error cancelling order. Please try again." });
   }
-
-  // Update order status
-  order.orderStatus = "Canceled";
-  await order.save();
-
-  // 📩 **Send email to the customer**
-  await sendEmail(
-    order.customer.email,
-    "Your Order Has Been Canceled",
-    `
-      Hi ${order.customer.name},
-
-      Your order with Tracking ID: ${order.trackingId} has been successfully canceled.
-      ${refundMessage ? refundMessage : "Since this was a cash-on-delivery order, no refund is required."}
-
-      If you have any questions, feel free to contact our support.
-
-      Regards,  
-      Your Company Name
-    `
-  );
-
-  // 📩 **Send email to the admin**
-  await sendEmail(
-    process.env.ADMIN_EMAIL,
-    "Order Cancellation Alert",
-    `
-      Alert! An order has been canceled.
-
-      Order ID: ${order._id}  
-      Customer: ${order.customer.name} (${order.customer.email})  
-      Total Amount: ₹${order.totalAmount}  
-      Payment Mode: ${order.paymentMode}  
-      Refund Status: ${refundDetails.status || "N/A"}  
-
-      Please review the cancellation and update inventory if needed.
-    `
-  );
-
-  // 🔄 **Emit WebSocket event**
-  io.emit("orderCancelled", {
-    orderId: order._id,
-    status: "Canceled",
-    refundStatus: refundDetails.status || "N/A",
-  });
-
-  res.json({ message: "Order canceled successfully. Notifications sent.", order });
 });
+
+//   try {
+//     const { id } = req.params;
+//     const order = await Order.findById(id).populate("customer", "email name");
+
+//     if (!order) {
+//       return res.status(404).json({ message: "Order not found." });
+//     }
+
+//     if (order.orderStatus !== "Pending" && order.orderStatus !== "Processing") {
+//       return res.status(400).json({ message: "Order cannot be canceled at this stage." });
+//     }
+
+//     let refundMessage = "";
+//     let refundDetails = {};
+
+//     // Handle refund if the order was paid online
+//     if (order.paymentMode === "Online" && order.paymentStatus === "Paid") {
+//       try {
+//         // Simulate refund processing (Replace with real payment gateway API call)
+//         const refundResponse = { refundId: `REF-${Date.now()}` };
+
+//         refundDetails = {
+//           status: "Processed",
+//           refundId: refundResponse.refundId,
+//           refundAmount: order.totalAmount,
+//           refundDate: new Date(),
+//         };
+
+//         order.paymentStatus = "Refunded";
+//         order.refund = refundDetails;
+//         refundMessage = `Refund of ₹${order.totalAmount} has been processed. Refund ID: ${refundResponse.refundId}.`;
+//       } catch (error) {
+//         refundDetails = { status: "Failed", refundAmount: order.totalAmount };
+//         order.refund = refundDetails;
+//         return res.status(500).json({ message: "Failed to process refund. Please try again." });
+//       }
+//     }
+
+//     // Update order status to cancelled
+//     order.orderStatus = "Cancelled";
+//     await order.save();
+
+//     // Send email notifications
+//     await sendEmail(
+//       order.customer.email,
+//       "Your Order Has Been Canceled",
+//       `Hello ${order.customer.name},\n\nYour order with Tracking ID: ${order.trackingId} has been successfully canceled.\n${refundMessage}\n\nIf you have any questions, contact support.\n\nThank you!`
+//     );
+
+//     await sendEmail(
+//       process.env.ADMIN_EMAIL,
+//       "Order Cancellation Alert",
+//       `Admin Alert!\n\nAn order has been canceled.\nOrder ID: ${order._id}\nCustomer: ${order.customer.name} (${order.customer.email})\nTotal Amount: ₹${order.totalAmount}\nRefund Status: ${refundDetails.status || "N/A"}`
+//     );
+
+//     // Emit WebSocket event for real-time update
+//     io.emit("orderCancelled", { orderId: order._id, status: "Cancelled", refundStatus: refundDetails.status || "N/A" });
+
+//     res.json({ message: "Order canceled successfully. Notifications sent.", order });
+//   } catch (error) {
+//     console.error("❌ Error in cancelOrder:", error);
+//     res.status(500).json({ message: "Error cancelling order. Please try again." });
+//   }
+// });
+
+
+
 
 // 📌 Assign a driver to an order (Admin Only)
 const assignDriver = asyncHandler(async (req, res) => {
@@ -493,4 +595,4 @@ const getOrderByTrackingId = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getOrderByTrackingId,createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
+module.exports = {getAllOrders, getOrderByTrackingId , createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };

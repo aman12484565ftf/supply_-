@@ -53,13 +53,15 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/warehouses", warehouseRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/driver", require("./routes/driverRoutes"));
 
 // Error Handling Middleware
 app.use(notFound);
 app.use(errorHandler);
 
 // Export io instance for WebSocket events in routes
-module.exports = { io };
+module.exports = { app,io };
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
