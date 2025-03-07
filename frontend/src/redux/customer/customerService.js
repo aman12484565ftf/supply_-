@@ -4,8 +4,14 @@ const API_URL = "http://localhost:5000/api/customer"; // Adjust API URL if neede
 
 // Fetch customer orders
 export const getCustomerOrders = async () => {
+  "customer/fetchOrders",
+    async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/customer/orders");
+      const response = await fetch("http://localhost:5000/api/customer/orders", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Ensure authentication cookies are sent
+      });
       const data = await response.json();
       
       if (!Array.isArray(data)) {   // Ensure response is an array
@@ -16,8 +22,9 @@ export const getCustomerOrders = async () => {
       return data;
     } catch (error) {
       console.error("Error fetching orders:", error);
-      return [];
+      return rejectWithValue(error.message);
     }
+  }
   };
 
   export const fetchCustomerOrders = async () => (

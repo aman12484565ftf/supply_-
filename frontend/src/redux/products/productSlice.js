@@ -4,7 +4,9 @@ import axios from "axios";
 // ✅ Fetch products from backend
 export const fetchProducts = createAsyncThunk("products/fetchProducts", async (_, thunkAPI) => {
   try {
-    const response = await axios.get("/api/products");
+    const token = thunkAPI.getState().auth.user?.token;
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const response = await axios.get("http://localhost:5000/api/products", config);
     return response.data; // Ensure this returns an array
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch products");

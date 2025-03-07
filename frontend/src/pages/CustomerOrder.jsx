@@ -59,16 +59,24 @@ const CustomerOrder = () => {
       alert("Your cart is empty.");
       return;
     }
-    dispatch(placeOrder({ 
-      items: cart, 
-      totalAmount: calculateTotal() 
-    }));
-    setOrderSuccess(true);
-    setTimeout(() => {
-      setCart([]);
-      setOrderSuccess(false);
-    }, 3000);
+  
+    const orderData = {
+      items: cart,
+      totalAmount: calculateTotal(),
+    };
+  
+    dispatch(placeOrder(orderData))
+      .unwrap()
+      .then(() => {
+        setOrderSuccess(true);
+        setCart([]);
+      })
+      .catch((error) => {
+        console.error("Order failed:", error);
+        alert("Failed to place order. Please try again.");
+      });
   };
+  
 
   const calculateTotal = () => {
     return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);

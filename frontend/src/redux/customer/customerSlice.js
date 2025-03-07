@@ -9,17 +9,16 @@ export const fetchCustomerOrders = createAsyncThunk(
       const token = thunkAPI.getState().auth.user?.token;
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
-      console.log("📡 Fetching customer orders...");
-      const response = await axios.get("http://localhost:5000/api/customer/orders", config);
-      console.log("✅ Orders received:", response.data);
+      // ✅ Ensure this URL matches the backend
+      const response = await axios.get("http://localhost:5000/api/orders/user", config);
       
-      return Array.isArray(response.data) ? response.data : [];
+      return response.data;
     } catch (error) {
-      console.error("❌ API Error:", error.response?.data);
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch orders");
     }
   }
 );
+
 
 // ✅ Fetch Order Tracking Details
 export const fetchOrderTracking = createAsyncThunk(
@@ -80,16 +79,16 @@ const customerSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchCustomerOrders.fulfilled, (state, action) => {
-        console.log("✅ Redux Updated Orders:", action.payload);
+        console.log("✅ API Response:", action.payload); // Debug the actual data
         state.loading = false;
-        state.orders = Array.isArray(action.payload) ? action.payload : [];
+        state.orders = Array.isArray(action.payload) ? action.payload : []; 
       })
       .addCase(fetchCustomerOrders.rejected, (state, action) => {
         console.error("❌ Redux Error:", action.payload);
         state.loading = false;
         state.error = action.payload;
       })
-
+      
       // ✅ Fetch Order Tracking
       .addCase(fetchOrderTracking.pending, (state) => {
         state.tracking = null;

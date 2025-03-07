@@ -12,15 +12,15 @@ const {
   assignDriver,
   createInvoice,
   getOrderByTrackingId,
-  getAllOrders
+  getAllOrders,
+  getCustomerOrders
 } = require("../controllers/orderController");
 
 const router = express.Router();
-
-router.post("/", protect, createOrder);
+router.post("/", protect, createOrder); // ✅ Ensure this route exists
 router.get("/", protect, authorize("admin", "warehouseManager"), getAllOrders);
-
-router.get("/user", protect, getUserOrders);
+router.get("/user", protect, getCustomerOrders);
+// router.get("/user", protect, getUserOrders);
 
 // router.put("/:id/cancel", protect, cancelOrder);
 router.put("/:id/cancel", protect, authorize("admin", "customer"), cancelOrder);

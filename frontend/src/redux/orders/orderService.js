@@ -23,5 +23,12 @@ const cancelOrder = async (orderId, reason, token) => {
   return response.data;
 };
 
-const orderService = { getOrders, updateOrder, cancelOrder };
+const placeOrder = async (orderData, token) => {
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+  const response = await axios.post(`${API_URL}`, orderData, config);
+  return response.data;
+};
+
+
+const orderService = { getOrders, updateOrder, cancelOrder, placeOrder };
 export default orderService;

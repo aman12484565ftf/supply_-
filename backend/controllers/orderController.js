@@ -595,4 +595,17 @@ const getOrderByTrackingId = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = {getAllOrders, getOrderByTrackingId , createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
+const getCustomerOrders = asyncHandler(async (req, res) => {
+  const customerId = req.user._id; // Ensure req.user exists from authMiddleware
+  console.log(customerId);
+  // ✅ Fetch orders where the user is the customer
+  const orders = await Order.find({ customer: customerId }).populate("items.product", "name price");
+  console.log(orders);
+  if (!orders || orders.length === 0) {
+    return res.status(200).json([]); // Return empty array instead of throwing an error
+  }
+
+  res.status(200).json(orders);
+});
+
+module.exports = {getAllOrders,getCustomerOrders, getOrderByTrackingId , createInvoice,createOrder,updateDeliveryStatus,confirmDelivery,getDriverOrders,assignDriver, getUserOrders, updateOrderStatus, updateShipmentStatus, cancelOrder };
