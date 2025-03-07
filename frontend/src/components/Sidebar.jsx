@@ -57,8 +57,6 @@ const Sidebar = () => {
     ],
     customer: [
       { title: "Dashboard", icon: <BarChart size={20} />, path: "/dashboard" },
-      { title: "My Orders", icon: <ClipboardList size={20} />, path: "/customer/orders" },
-      { title: "Track Order", icon: <MapPin size={20} />, path: "/customer/track" },
       { title: "Place Order", icon: <ShoppingCart size={20} />, path: "/customer/order" },
     ],
     warehouse_manager: [
@@ -147,7 +145,7 @@ const Sidebar = () => {
           </ul>
           
           {/* Notification */}
-          <div className={`mx-3 mt-6 mb-6 p-4 bg-blue-500/30 rounded-lg ${collapsed ? "text-center" : ""}`}>
+          {/* <div className={`mx-3 mt-6 mb-6 p-4 bg-blue-500/30 rounded-lg ${collapsed ? "text-center" : ""}`}>
             {collapsed ? (
               <Bell size={20} className="mx-auto text-blue-100 animate-pulse" />
             ) : (
@@ -159,10 +157,10 @@ const Sidebar = () => {
                 <p className="text-xs text-blue-200">5 new orders need attention</p>
               </>
             )}
-          </div>
+          </div> */}
           
           {/* Bottom Navigation */}
-          <ul className="space-y-1 px-3">
+          {/* <ul className="space-y-1 px-3">
             {bottomNavItems.map((item, index) => (
               <li key={index}>
                 <Link 
@@ -177,7 +175,7 @@ const Sidebar = () => {
                 </Link>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </nav>
       </aside>
     </>
