@@ -9,7 +9,7 @@ import { fetchRevenueAnalytics } from "../redux/admin/adminSlice";
 const AdminDashboard = () => {
 
   const dispatch = useDispatch();
-  const { orders, revenue = 0, users , stock = 0, loading, error } = useSelector(
+  const { orders, revenue = 0, users, stock = 0, loading, error } = useSelector(
     (state) => state.admin || {}
   );
   const [animateStats, setAnimateStats] = useState(false);
@@ -28,6 +28,8 @@ const AdminDashboard = () => {
   
   const { revenueData = [], loadingnew } = useSelector((state) => state.admin);
   
+  // Calculate total users - handle both array of users and direct number
+  const totalUsers = Array.isArray(users) ? users.length : (typeof users === 'number' ? users : 0);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -50,15 +52,47 @@ const AdminDashboard = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <StatCard title="Total Orders" value={orders || 0} change="+12.5%" isPositive={true} icon={<Package size={24} className="text-blue-500" />} delay={0} animate={animateStats} />
-                <StatCard title="Total Revenue" value={`₹${revenue.toLocaleString()}`} change="+8.2%" isPositive={true} icon={<IndianRupee size={24} className="text-green-500" />} delay={100} animate={animateStats} />
-                <StatCard title="Total Users" value={users || 0} change="+5.3%" isPositive={true} icon={<Users size={24} className="text-indigo-500" />} delay={200} animate={animateStats} />
-                <StatCard title="Available Stock" value={stock || 0} change="-2.4%" isPositive={false} icon={<Archive size={24} className="text-amber-500" />} delay={300} animate={animateStats} />
+                <StatCard 
+                  title="Total Orders" 
+                  value={typeof orders === 'number' ? orders : 0} 
+                  change="+12.5%" 
+                  isPositive={true} 
+                  icon={<Package size={24} className="text-blue-500" />} 
+                  delay={0} 
+                  animate={animateStats} 
+                />
+                <StatCard 
+                  title="Total Revenue" 
+                  value={`₹${(typeof revenue === 'number' ? revenue : 0).toLocaleString()}`} 
+                  change="+8.2%" 
+                  isPositive={true} 
+                  icon={<IndianRupee size={24} className="text-green-500" />} 
+                  delay={100} 
+                  animate={animateStats} 
+                />
+                <StatCard 
+                  title="Total Users" 
+                  value={totalUsers} 
+                  change="+5.3%" 
+                  isPositive={true} 
+                  icon={<Users size={24} className="text-indigo-500" />} 
+                  delay={200} 
+                  animate={animateStats} 
+                />
+                <StatCard 
+                  title="Available Stock" 
+                  value={typeof stock === 'number' ? stock : 0} 
+                  change="-2.4%" 
+                  isPositive={false} 
+                  icon={<Archive size={24} className="text-amber-500" />} 
+                  delay={300} 
+                  animate={animateStats} 
+                />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <ChartCard title="Sales Analytics" subtitle="Monthly revenue from orders" chartType="bar" data={revenueData} loading={loading} />
-                <ChartCard title="Revenue Trend" subtitle="Last 6 months" chartType="line" data={revenueData} loading={loading} />
+                <ChartCard title="Sales Analytics" subtitle="Monthly revenue from orders" chartType="bar" data={revenueData} loading={loadingnew} />
+                <ChartCard title="Revenue Trend" subtitle="Last 6 months" chartType="line" data={revenueData} loading={loadingnew} />
               </div>
             </>
           )}
@@ -83,43 +117,7 @@ const StatCard = ({ title, value, change, isPositive, icon, delay, animate }) =>
   </div>
 );
 
-//   <div className="p-6 bg-white shadow-md rounded-xl hover:shadow-lg transition-shadow duration-300">
-//     <div className="flex justify-between items-center mb-6">
-//       <div>
-//         <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
-//         <p className="text-gray-500">{subtitle}</p>
-//       </div>
-//       <div className="flex items-center text-green-500 text-sm font-medium">
-//         <span>+12.5%</span>
-//         <TrendingUp size={16} className="ml-1" />
-//       </div>
-//     </div>
-//     {loading ? (
-//       <div className="h-32 flex items-center justify-center">
-//         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-//       </div>
-//     ) : (
-//       <ResponsiveContainer width="100%" height={300}>
-//         {chartType === "bar" ? (
-//           <BarChart data={data}>
-//             <XAxis dataKey="name" axisLine={false} tickLine={false} />
-//             <YAxis axisLine={false} tickLine={false} />
-//             <Tooltip contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-//             <Bar dataKey="value" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-//           </BarChart>
-//         ) : (
-//           <LineChart data={data}>
-//             <XAxis dataKey="name" axisLine={false} tickLine={false} />
-//             <YAxis axisLine={false} tickLine={false} />
-//             <Tooltip contentStyle={{ backgroundColor: "#fff", border: "none", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-//             <Line type="monotone" dataKey="value" stroke="#6366F1" strokeWidth={3} dot={{ r: 4, strokeWidth: 3 }} />
-//           </LineChart>
-//         )}
-//       </ResponsiveContainer>
-//     )}
-//   </div>
-// );
-const ChartCard = ({ title, subtitle, chartType, data, loadingnew }) => (
+const ChartCard = ({ title, subtitle, chartType, data, loading }) => (
   <div className="p-6 bg-white shadow-md rounded-xl hover:shadow-lg transition-shadow duration-300">
     <div className="flex justify-between items-center mb-6">
       <div>
@@ -127,8 +125,10 @@ const ChartCard = ({ title, subtitle, chartType, data, loadingnew }) => (
         <p className="text-gray-500">{subtitle}</p>
       </div>
     </div>
-    {loadingnew ? (
-      <div className="flex items-center justify-center h-40">Loading...</div>
+    {loading ? (
+      <div className="flex items-center justify-center h-40">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
     ) : data.length === 0 ? (
       <div className="flex items-center justify-center h-40 text-gray-500">No data available</div>
     ) : (
@@ -153,5 +153,4 @@ const ChartCard = ({ title, subtitle, chartType, data, loadingnew }) => (
   </div>
 );
 
-  
 export default AdminDashboard;

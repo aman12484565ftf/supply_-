@@ -11,7 +11,7 @@ router.get("/dashboard", protect, authorize("admin"), getDashboardStats);
 router.get("/orders", protect, authorize("admin"), getAllOrders);
 
 // Fetch All Users
-router.get("/users", protect, authorize("admin"), getAllUsers);
+router.get("/users",  getAllUsers);
 
 router.get("/revenue-analytics", protect, authorize("admin"), getRevenueAnalytics);
 

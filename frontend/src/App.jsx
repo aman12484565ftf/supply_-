@@ -11,6 +11,7 @@ import OrderDashboard from "./pages/OrderDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerOrders from "./pages/CustomerOrder";
+import AdminUsers from "./pages/AdminUsers";
 function App() {
   const { user } = useSelector((state) => state.auth);
   
@@ -21,7 +22,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
+        <Route path="/admin/users" element={<AdminUsers />} />
         {/* Protected Routes (Only Logged-In Users) */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={

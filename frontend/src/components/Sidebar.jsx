@@ -51,8 +51,6 @@ const Sidebar = () => {
       { title: "Dashboard", icon: <BarChart size={20} />, path: "/dashboard" },
       { title: "Orders", icon: <Package size={20} />, path: "/orders" },
       { title: "Users", icon: <Users size={20} />, path: "/admin/users" },
-      { title: "Products", icon: <ShoppingCart size={20} />, path: "/admin/products" },
-      { title: "Shipments", icon: <Truck size={20} />, path: "/admin/shipments" },
       { title: "Inventory", icon: <Layers size={20} />, path: "/inventory" },
     ],
     customer: [

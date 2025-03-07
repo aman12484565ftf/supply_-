@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getDashboardStats, getRevenueAnalytics } from "./adminService";
-
+import axios from "axios";
 // Fetch dashboard stats (orders, revenue, users, stock)
 export const fetchAdminData = createAsyncThunk(
   "admin/fetchDashboard",
@@ -23,7 +23,20 @@ export const fetchAdminData = createAsyncThunk(
     }
   }
 );
+export const fetchUsers = createAsyncThunk("admin/fetchUsers", async (_, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user?.token;
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    
+    const response = await axios.get("http://localhost:5000/api/admin/users", config);
+    console.log("✅ Fetched Users:", response.data); // 🔍 Debugging
 
+    return response.data;
+  } catch (error) {
+    console.error("❌ API Error:", error.response?.data || error.message);
+    return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch users");
+  }
+});
 // Fetch monthly revenue analytics
 export const fetchRevenueAnalytics = createAsyncThunk(
   "admin/fetchRevenueAnalytics",
@@ -79,6 +92,18 @@ const adminSlice = createSlice({
         state.revenueData = action.payload;
       })
       .addCase(fetchRevenueAnalytics.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
