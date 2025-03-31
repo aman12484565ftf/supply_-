@@ -117,7 +117,7 @@ const Sidebar = () => {
             <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
               <Truck size={16} className="text-white" />
             </div>
-            {!collapsed && <h2 className="text-xl font-bold text-zinc-50">SupplyChainPro</h2>}
+            {!collapsed && <h2 className="text-xl font-bold text-zinc-50">EverStock</h2>}
           </div>
           <button 
             className="text-emerald-400 hover:text-white transition-colors hidden lg:block"
