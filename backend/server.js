@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "*", // Adjust for frontend
+    origin: "https://everstock.netlify.app", // Adjust for frontend
     methods: ["GET", "POST", "PUT"],
   },
 });
