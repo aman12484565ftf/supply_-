@@ -283,12 +283,97 @@ const Home = () => {
             <div className="relative">
               <div className="absolute -top-12 -left-12 w-full h-full bg-gradient-to-br from-emerald-100 to-cyan-100 rounded-3xl transform -rotate-2"></div>
               <div className="relative bg-white p-4 rounded-3xl shadow-xl transform rotate-1 border border-zinc-100">
-                <img 
-                  src="/api/placeholder/800/500" 
-                  alt="Analytics Dashboard" 
-                  className="rounded-xl w-full"
-                />
-                
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+                  <rect width="800" height="500" fill="#1e293b" rx="12" ry="12"/>
+                  
+                  <rect x="20" y="20" width="760" height="60" fill="#1e2736" rx="8" ry="8"/>
+                  <circle cx="50" cy="50" r="10" fill="#ef4444"/>
+                  <circle cx="80" cy="50" r="10" fill="#f59e0b"/>
+                  <circle cx="110" cy="50" r="10" fill="#10b981"/>
+                  <rect x="140" y="40" width="200" height="20" fill="#334155" rx="4" ry="4"/>
+                  <rect x="600" y="40" width="160" height="20" fill="#334155" rx="10" ry="10"/>
+                  
+                  <rect x="20" y="100" width="180" height="380" fill="#1e2736" rx="8" ry="8"/>
+                  
+                  <rect x="40" y="130" width="140" height="40" fill="#0f766e" rx="6" ry="6"/>
+                  <rect x="50" y="145" width="20" height="10" fill="#fff"/>
+                  <rect x="80" y="145" width="80" height="10" fill="#fff"/>
+                  
+                  <rect x="40" y="190" width="140" height="40" fill="#334155" rx="6" ry="6"/>
+                  <rect x="50" y="205" width="20" height="10" fill="#64748b"/>
+                  <rect x="80" y="205" width="80" height="10" fill="#64748b"/>
+                  
+                  <rect x="40" y="250" width="140" height="40" fill="#334155" rx="6" ry="6"/>
+                  <rect x="50" y="265" width="20" height="10" fill="#64748b"/>
+                  <rect x="80" y="265" width="80" height="10" fill="#64748b"/>
+                  
+                  <rect x="40" y="310" width="140" height="40" fill="#334155" rx="6" ry="6"/>
+                  <rect x="50" y="325" width="20" height="10" fill="#64748b"/>
+                  <rect x="80" y="325" width="80" height="10" fill="#64748b"/>
+                  
+                  <rect x="220" y="100" width="560" height="380" fill="#1e2736" rx="8" ry="8"/>
+                  
+                  <rect x="240" y="120" width="200" height="24" fill="#2d3748" rx="4" ry="4"/>
+                  <rect x="240" y="154" width="120" height="16" fill="#475569" rx="3" ry="3"/>
+                  
+                  <rect x="240" y="190" width="160" height="100" fill="#1f2937" rx="8" ry="8"/>
+                  <rect x="255" y="205" width="130" height="15" fill="#334155" rx="2" ry="2"/>
+                  <rect x="255" y="230" width="80" height="20" fill="#0ea5e9" rx="2" ry="2"/>
+                  <rect x="255" y="260" width="130" height="8" fill="#475569" rx="4" ry="4"/>
+                  <rect x="255" y="272" width="90" height="8" fill="#0ea5e9" rx="4" ry="4" opacity="0.7"/>
+                  
+                  <rect x="420" y="190" width="160" height="100" fill="#1f2937" rx="8" ry="8"/>
+                  <rect x="435" y="205" width="130" height="15" fill="#334155" rx="2" ry="2"/>
+                  <rect x="435" y="230" width="80" height="20" fill="#10b981" rx="2" ry="2"/>
+                  <rect x="435" y="260" width="130" height="8" fill="#475569" rx="4" ry="4"/>
+                  <rect x="435" y="272" width="100" height="8" fill="#10b981" rx="4" ry="4" opacity="0.7"/>
+                  
+                  <rect x="600" y="190" width="160" height="100" fill="#1f2937" rx="8" ry="8"/>
+                  <rect x="615" y="205" width="130" height="15" fill="#334155" rx="2" ry="2"/>
+                  <rect x="615" y="230" width="80" height="20" fill="#8b5cf6" rx="2" ry="2"/>
+                  <rect x="615" y="260" width="130" height="8" fill="#475569" rx="4" ry="4"/>
+                  <rect x="615" y="272" width="70" height="8" fill="#8b5cf6" rx="4" ry="4" opacity="0.7"/>
+                  
+                  <rect x="240" y="310" width="320" height="150" fill="#1f2937" rx="8" ry="8"/>
+                  <rect x="255" y="325" width="130" height="15" fill="#334155" rx="2" ry="2"/>
+                  
+                  <polyline points="260,400 290,390 320,410 350,370 380,380 410,350 440,360 470,330 500,345 530,320" 
+                          fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                          
+                  <polyline points="260,420 290,430 320,415 350,425 380,405 410,415 440,395 470,405 500,385 530,380" 
+                          fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                          
+                  <line x1="260" y1="430" x2="530" y2="430" stroke="#64748b" stroke-width="1"/>
+                  <line x1="260" y1="430" x2="260" y2="330" stroke="#64748b" stroke-width="1"/>
+
+                  <rect x="270" y="440" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  <rect x="330" y="440" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  <rect x="390" y="440" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  <rect x="450" y="440" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  <rect x="510" y="440" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  
+                  <rect x="245" y="370" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  <rect x="245" y="400" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  <rect x="245" y="340" width="10" height="5" fill="#64748b" rx="1" ry="1"/>
+                  
+                  <rect x="580" y="310" width="180" height="150" fill="#1f2937" rx="8" ry="8"/>
+                  <rect x="595" y="325" width="100" height="15" fill="#334155" rx="2" ry="2"/>
+                  
+                  <circle cx="670" cy="385" r="50" fill="none" stroke="#475569" stroke-width="1"/>
+                  
+                  <path d="M670,385 L670,335 A50,50 0 0,1 713,407 z" fill="#10b981"/>
+                  <path d="M670,385 L713,407 A50,50 0 0,1 627,407 z" fill="#0ea5e9"/>
+                  <path d="M670,385 L627,407 A50,50 0 0,1 670,335 z" fill="#8b5cf6"/>
+                  
+                  <rect x="595" y="435" width="10" height="10" fill="#10b981" rx="2" ry="2"/>
+                  <rect x="610" y="435" width="40" height="5" fill="#64748b" rx="1" ry="1"/>
+                  
+                  <rect x="665" y="435" width="10" height="10" fill="#0ea5e9" rx="2" ry="2"/>
+                  <rect x="680" y="435" width="40" height="5" fill="#64748b" rx="1" ry="1"/>
+                  
+                  <rect x="595" y="450" width="10" height="10" fill="#8b5cf6" rx="2" ry="2"/>
+                  <rect x="610" y="450" width="40" height="5" fill="#64748b" rx="1" ry="1"/>
+                </svg> 
                 <div className="absolute -bottom-8 -right-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-4 shadow-lg flex items-center text-white">
                   <ChartBarIcon size={24} className="mr-2" />
                   <span className="font-medium">Live Analytics</span>
