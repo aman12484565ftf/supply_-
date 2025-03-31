@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/admin"; // Ensure correct base URL
+const API_URL = "https://supplychainpro.onrender.com/api/admin"; // Ensure correct base URL
 
 export const getDashboardStats = async (token) => {
   if (!token) {

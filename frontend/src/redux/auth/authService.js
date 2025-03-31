@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/users"; // Update with your backend URL
+const API_URL = "https://supplychainpro.onrender.com/api/users"; // Update with your backend URL
 
 // 📌 Register User
 const register = async (userData) => {

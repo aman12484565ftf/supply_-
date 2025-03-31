@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/warehouses"; // ✅ Ensure correct base URL
+const API_URL = "https://supplychainpro.onrender.com/api/warehouses"; // ✅ Ensure correct base URL
 
 // Fetch Warehouse Statistics
 const fetchWarehouseStats = async (token) => {
