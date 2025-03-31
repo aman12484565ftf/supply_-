@@ -509,7 +509,7 @@ const Home = () => {
                 <div className="mr-3 w-8 h-8 rounded-md bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
                   <TruckIcon size={18} className="text-white" />
                 </div>
-                SupplyChainPro
+                EverStock
               </div>
               <p className="text-zinc-400 mb-6">
                 Next-generation logistics management for the modern enterprise. Simplify operations, reduce costs, and boost efficiency.
@@ -578,7 +578,7 @@ const Home = () => {
           </div>
           
           <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center">
-            <p>© {new Date().getFullYear()} SupplyChainPro. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} EverStock. All rights reserved.</p>
             <div className="mt-4 md:mt-0">
               <a href="/contact" className="flex items-center bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-lg px-4 py-2">
                 <span className="mr-2">Contact Support</span>
