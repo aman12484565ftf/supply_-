@@ -6,7 +6,7 @@ import orderReducer from "./orders/orderSlice";
 import driverReducer from "./driver/driverSlice";
 import customerReducer from "./customer/customerSlice";
 import productReducer from "./products/productSlice";
-
+import warehouseReducer from "./warehouse/warehouseSlice";
 const store = configureStore({
   reducer: {
     admin: adminReducer,
@@ -16,6 +16,7 @@ const store = configureStore({
     driver: driverReducer,
     customer: customerReducer,
     products: productReducer,
+    warehouse: warehouseReducer
   },
 });
 

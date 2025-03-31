@@ -11,6 +11,7 @@ import OrderDashboard from "./pages/OrderDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerOrders from "./pages/CustomerOrder";
+import WarehouseDashboard from "./pages/WarehouseDashboard";
 import AdminUsers from "./pages/AdminUsers";
 function App() {
   const { user } = useSelector((state) => state.auth);
@@ -26,6 +27,7 @@ function App() {
         {/* Protected Routes (Only Logged-In Users) */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={
+            user?.role === "warehouse_manager" ? <WarehouseDashboard /> :
             user?.role === "admin" ? <Dashboard /> :
             user?.role === "driver" ? <DriverDashboard /> :
             user?.role === "customer" ? <CustomerDashboard /> :

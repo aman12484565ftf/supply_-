@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Warehouse = require("../models/warehouseModel");
 const mongoose = require("mongoose");
+const Product = require("../models/productModel");  // ✅ Import Missing Models
+const Order = require("../models/orderModel"); 
 
 // 📌 Add new warehouse (with stock items)
 const addWarehouse = asyncHandler(async (req, res) => {
@@ -31,7 +33,17 @@ const addWarehouse = asyncHandler(async (req, res) => {
 // 📌 Get all warehouses with populated stock details
 const getStockItems = asyncHandler(async (req, res) => {
   const warehouses = await Warehouse.find().populate("stock.product", "name price category");
+  console.log("📦 Warehouse Data Sent:", warehouses); // Debug log
   res.json(warehouses);
+});
+
+const getWarehouses = asyncHandler(async (req, res) => {
+  try {
+    const warehouses = await Warehouse.find();
+    res.json(warehouses);  // ✅ Ensure this is an array
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch warehouses" });
+  }
 });
 
 // 📌 Update stock quantity in a warehouse
@@ -63,5 +75,31 @@ const updateStockQuantity = asyncHandler(async (req, res) => {
   }
 });
 
+const getWarehouseStats = asyncHandler(async (req, res) => {
+  try {
+    const totalProducts = await Product.countDocuments();  
+
+    // ✅ Check if `stock` exists in `Product` or `Warehouse`
+    const lowStock = await Warehouse.aggregate([
+      { $unwind: "$stock" },
+      { $match: { "stock.quantity": { $lt: 10 } } },
+      { $count: "lowStockCount" }
+    ]);
+
+    // ✅ Fix pending shipments query
+    const pendingShipments = await Order.countDocuments({ status: { $regex: /pending/i } });
+
+    res.status(200).json({
+      totalProducts,
+      lowStock: lowStock.length > 0 ? lowStock[0].lowStockCount : 0,
+      pendingShipments
+    });
+  } catch (error) {
+    console.error("🚨 Warehouse Stats Error:", error.message);
+    res.status(500).json({ message: "Failed to fetch warehouse stats" });
+  }
+});
+
+
 // 📌 Export functions
-module.exports = { addWarehouse, getStockItems, updateStockQuantity };
+module.exports = {getWarehouseStats,getWarehouses, addWarehouse, getStockItems, updateStockQuantity };

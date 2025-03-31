@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../redux/auth/authSlice";
 import { useNavigate } from "react-router-dom";
-import { TruckIcon, UserIcon, MailIcon, KeyIcon, BriefcaseIcon } from "lucide-react";
+import { TruckIcon, UserIcon, MailIcon, KeyIcon, BriefcaseIcon, ArrowRightIcon } from "lucide-react";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ const Signup = () => {
   });
   const [isHovered, setIsHovered] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -57,90 +58,98 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-900 to-indigo-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-950 via-teal-900 to-cyan-900">
+      {/* Background with depth layers - matching Login.jsx style */}
       <div className="absolute inset-0 overflow-hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="text-white/5 absolute bottom-0 left-0 right-0">
-          <path fill="currentColor" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
+        <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-emerald-400 blur-3xl opacity-20"
+            style={{ transform: `translateY(${scrollY * 0.15}px)` }}></div>
+        <div className="absolute top-1/2 -left-32 w-64 h-64 rounded-full bg-cyan-500 blur-3xl opacity-20"
+            style={{ transform: `translateY(${-scrollY * 0.2}px)` }}></div>
+        <div className="absolute bottom-20 right-1/3 w-80 h-80 rounded-full bg-teal-400 blur-3xl opacity-20"
+            style={{ transform: `translateY(${-scrollY * 0.25}px)` }}></div>
       </div>
       
       <div className="max-w-md w-full mx-4 relative z-10 my-8">
-        <div className="text-center mb-6">
-          <div className="mb-4 transform transition-transform duration-700 hover:scale-105">
-            <div className="inline-block p-3 rounded-full bg-blue-500/30 mb-2">
-              <TruckIcon size={40} className="text-white" />
+        <div className="text-center mb-8">
+          <div className="mb-6 transform transition-transform duration-700 hover:scale-105">
+            <div className="inline-block p-3 rounded-full bg-emerald-500/20 mb-2">
+              <TruckIcon size={40} className="text-emerald-300" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">Create an Account</h2>
-          <p className="text-blue-200">Join our platform and optimize your supply chain</p>
+          <div className="mb-6 inline-flex items-center px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm font-medium tracking-wider">
+            <TruckIcon size={16} className="mr-2" />
+            SUPPLY CHAIN INTELLIGENCE
+          </div>
+          <h2 className="text-4xl font-bold text-white mb-2">Create Account</h2>
+          <p className="text-zinc-300">Join our platform and optimize your supply chain</p>
         </div>
         
-        <div className="bg-white/10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20">
+        <div className="bg-zinc-800/50 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-zinc-700">
           {error && (
-            <div className="bg-red-500/20 border border-red-500/50 text-white rounded p-3 mb-6">
+            <div className="bg-red-500/20 border border-red-500/50 text-white rounded-lg p-3 mb-6">
               <p>{error}</p>
             </div>
           )}
           
           <form onSubmit={handleSubmit}>
             <div className="mb-5">
-              <label className="block text-blue-100 text-sm font-medium mb-2">Full Name</label>
+              <label className="block text-zinc-300 text-sm font-medium mb-2">Full Name</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <UserIcon size={18} className="text-blue-300" />
+                  <UserIcon size={18} className="text-emerald-400" />
                 </div>
                 <input 
                   type="text" 
                   name="name" 
                   placeholder="Your full name" 
                   onChange={handleChange} 
-                  className="w-full pl-10 p-3 bg-white/10 border border-blue-300/30 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 p-3 bg-zinc-900/90 border border-zinc-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                   required 
                 />
               </div>
             </div>
             
             <div className="mb-5">
-              <label className="block text-blue-100 text-sm font-medium mb-2">Email</label>
+              <label className="block text-zinc-300 text-sm font-medium mb-2">Email</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MailIcon size={18} className="text-blue-300" />
+                  <MailIcon size={18} className="text-emerald-400" />
                 </div>
                 <input 
                   type="email" 
                   name="email" 
                   placeholder="Your email address" 
                   onChange={handleChange} 
-                  className="w-full pl-10 p-3 bg-white/10 border border-blue-300/30 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 p-3 bg-zinc-900/90 border border-zinc-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                   required 
                 />
               </div>
             </div>
             
             <div className="mb-5">
-              <label className="block text-blue-100 text-sm font-medium mb-2">Password</label>
+              <label className="block text-zinc-300 text-sm font-medium mb-2">Password</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <KeyIcon size={18} className="text-blue-300" />
+                  <KeyIcon size={18} className="text-emerald-400" />
                 </div>
                 <input 
                   type="password" 
                   name="password" 
                   placeholder="Create a secure password" 
                   onChange={handleChange} 
-                  className="w-full pl-10 p-3 bg-white/10 border border-blue-300/30 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 p-3 bg-zinc-900/90 border border-zinc-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                   required 
                 />
               </div>
               {formData.password && (
                 <div className="mt-2">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-blue-200">Password strength:</span>
-                    <span className="text-xs text-blue-200">
+                    <span className="text-xs text-zinc-400">Password strength:</span>
+                    <span className="text-xs text-zinc-400">
                       {passwordStrength < 2 ? "Weak" : passwordStrength < 4 ? "Medium" : "Strong"}
                     </span>
                   </div>
-                  <div className="h-1 w-full bg-gray-300/30 rounded-full overflow-hidden">
+                  <div className="h-1 w-full bg-zinc-700 rounded-full overflow-hidden">
                     <div 
                       className={`h-full ${getStrengthColor()} transition-all duration-300`} 
                       style={{ width: `${(passwordStrength / 5) * 100}%` }}
@@ -151,17 +160,17 @@ const Signup = () => {
             </div>
             
             <div className="mb-8">
-              <label className="block text-blue-100 text-sm font-medium mb-2">Account Type</label>
+              <label className="block text-zinc-300 text-sm font-medium mb-2">Account Type</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <BriefcaseIcon size={18} className="text-blue-300" />
+                  <BriefcaseIcon size={18} className="text-emerald-400" />
                 </div>
                 <select 
                   name="role" 
                   onChange={handleChange} 
-                  className="w-full pl-10 p-3 bg-white/10 border border-blue-300/30 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
+                  className="w-full pl-10 p-3 bg-zinc-900/90 border border-zinc-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all appearance-none"
                   style={{ 
-                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238BB8F5' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2310B981' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                     backgroundPosition: `right 0.5rem center`,
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: '1.5em 1.5em',
@@ -169,7 +178,7 @@ const Signup = () => {
                   }}
                 >
                   {getRoleOptions().map(option => (
-                    <option key={option.value} value={option.value} className="bg-blue-900 text-white">
+                    <option key={option.value} value={option.value} className="bg-zinc-800 text-white">
                       {option.label}
                     </option>
                   ))}
@@ -179,9 +188,7 @@ const Signup = () => {
             
             <button 
               type="submit" 
-              className={`w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform ${isHovered ? 'translate-y-0' : 'hover:-translate-y-1'}`}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              className="group w-full py-4 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -193,19 +200,35 @@ const Signup = () => {
                   Creating account...
                 </span>
               ) : (
-                'Create Account'
+                <>
+                  Create Account
+                  <ArrowRightIcon size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </>
               )}
             </button>
           </form>
           
-          <div className="mt-6 text-center">
-            <p className="text-blue-200">
+          <div className="mt-8 text-center">
+            <p className="text-zinc-400">
               Already have an account?{" "}
-              <a href="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                Sign in
+              <a href="/login" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+                Sign In
               </a>
             </p>
           </div>
+          
+          <div className="mt-6 pt-6 border-t border-zinc-700">
+            <div className="text-center text-sm text-zinc-500">
+              By creating an account, you agree to our{" "}
+              <a href="/terms" className="text-emerald-400 hover:text-emerald-300">Terms of Service</a>{" "}
+              and{" "}
+              <a href="/privacy" className="text-emerald-400 hover:text-emerald-300">Privacy Policy</a>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-10 text-center text-zinc-400 text-sm">
+          © {new Date().getFullYear()} SupplyChainPro. All rights reserved.
         </div>
       </div>
     </div>

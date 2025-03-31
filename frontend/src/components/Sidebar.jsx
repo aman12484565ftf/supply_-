@@ -16,7 +16,11 @@ import {
   LogOut, 
   ClipboardList, 
   Home, 
-  MapPin 
+  MapPin,
+  ArrowRightIcon,
+  ChartBarIcon,
+  BoxIcon,
+  ShieldCheckIcon
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -84,14 +88,14 @@ const Sidebar = () => {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          className="fixed inset-0 bg-zinc-900/70 backdrop-blur-sm z-20 lg:hidden"
           onClick={() => setMobileOpen(false)}
         ></div>
       )}
       
       {/* Mobile toggle button */}
       <button 
-        className="fixed top-4 left-4 z-30 lg:hidden bg-blue-600 text-white p-2 rounded-md shadow-md"
+        className="fixed top-4 left-4 z-30 lg:hidden bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg shadow-lg transition-all duration-300"
         onClick={() => setMobileOpen(!mobileOpen)}
       >
         <Menu size={20} />
@@ -102,21 +106,21 @@ const Sidebar = () => {
         className={`fixed lg:static top-0 left-0 z-20 h-screen 
           ${collapsed ? "w-20" : "w-64"} 
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          bg-gradient-to-b from-blue-600 to-indigo-700 text-white
+          bg-gradient-to-b from-emerald-950 via-teal-900 to-cyan-900 text-white
           transition-all duration-300 ease-in-out
-          flex flex-col shadow-lg
+          flex flex-col shadow-xl border-r border-zinc-800/30
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-blue-500/30">
+        <div className="flex items-center justify-between p-5 border-b border-emerald-900/30">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <Truck size={20} className="text-blue-600" />
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
+              <Truck size={16} className="text-white" />
             </div>
-            {!collapsed && <h2 className="text-xl font-bold">SupplyChainPro</h2>}
+            {!collapsed && <h2 className="text-xl font-bold text-zinc-50">SupplyChainPro</h2>}
           </div>
           <button 
-            className="text-blue-300 hover:text-white transition-colors hidden lg:block"
+            className="text-emerald-400 hover:text-white transition-colors hidden lg:block"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronLeft size={20} className={`transform transition-transform ${collapsed ? "rotate-180" : ""}`} />
@@ -125,56 +129,107 @@ const Sidebar = () => {
 
         {/* Main Navigation */}
         <nav className="flex-1 py-5 overflow-y-auto custom-scrollbar">
-          <ul className="space-y-1 px-3">
+          <ul className="space-y-2 px-3">
             {navItems.map((item, index) => (
               <li key={index}>
                 <Link 
                   to={item.path} 
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors
-                    ${isActive(item.path) ? "bg-white/20 text-white" : "text-blue-100 hover:bg-white/10 hover:text-white"}
+                  className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300
+                    ${isActive(item.path) 
+                      ? "bg-gradient-to-r from-emerald-600/80 to-teal-600/80 text-white shadow-md" 
+                      : "text-zinc-300 hover:bg-emerald-800/40 hover:text-white"}
                     ${collapsed ? "justify-center" : ""}
                   `}
                 >
-                  <span className={isActive(item.path) ? "text-white" : "text-blue-200"}>{item.icon}</span>
-                  {!collapsed && <span>{item.title}</span>}
+                  <span className={isActive(item.path) ? "text-white" : "text-emerald-400"}>{item.icon}</span>
+                  {!collapsed && (
+                    <span className="font-medium">
+                      {item.title}
+                    </span>
+                  )}
+                  {!collapsed && isActive(item.path) && (
+                    <div className="ml-auto">
+                      <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                    </div>
+                  )}
                 </Link>
               </li>
             ))}
           </ul>
           
-          {/* Notification */}
-          {/* <div className={`mx-3 mt-6 mb-6 p-4 bg-blue-500/30 rounded-lg ${collapsed ? "text-center" : ""}`}>
+          {/* Notification Card */}
+          <div className={`mx-3 mt-6 mb-6 p-4 bg-emerald-800/30 rounded-lg border border-emerald-700/30 backdrop-blur-sm ${collapsed ? "text-center" : ""}`}>
             {collapsed ? (
-              <Bell size={20} className="mx-auto text-blue-100 animate-pulse" />
+              <Bell size={20} className="mx-auto text-emerald-300 animate-pulse" />
             ) : (
               <>
                 <div className="flex items-center space-x-2 mb-2">
-                  <Bell size={16} className="text-blue-100" />
-                  <span className="text-sm font-medium text-blue-100">Notifications</span>
+                  <Bell size={16} className="text-emerald-300" />
+                  <span className="text-sm font-medium text-emerald-300">Notifications</span>
                 </div>
-                <p className="text-xs text-blue-200">5 new orders need attention</p>
+                <p className="text-xs text-zinc-400">5 new orders need attention</p>
+                <div className="mt-3">
+                  <Link 
+                    to="/notifications" 
+                    className="group text-xs flex items-center text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
+                  >
+                    View all 
+                    <ArrowRightIcon size={12} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
               </>
             )}
-          </div> */}
+          </div>
           
           {/* Bottom Navigation */}
-          {/* <ul className="space-y-1 px-3">
-            {bottomNavItems.map((item, index) => (
-              <li key={index}>
-                <Link 
-                  to={item.path} 
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors
-                    ${isActive(item.path) ? "bg-white/20 text-white" : "text-blue-100 hover:bg-white/10 hover:text-white"}
-                    ${collapsed ? "justify-center" : ""}
-                  `}
-                >
-                  <span className={isActive(item.path) ? "text-white" : "text-blue-200"}>{item.icon}</span>
-                  {!collapsed && <span>{item.title}</span>}
-                </Link>
-              </li>
-            ))}
-          </ul> */}
+          <div className="px-3 pb-5">
+            <div className="py-2">
+              <div className="text-xs text-zinc-500 px-3 mb-2 uppercase font-medium tracking-wider">
+                {!collapsed && "Support"}
+              </div>
+              <ul className="space-y-1">
+                {bottomNavItems.map((item, index) => (
+                  <li key={index}>
+                    <Link 
+                      to={item.path} 
+                      className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300
+                        ${isActive(item.path) 
+                          ? "bg-zinc-800/40 text-white" 
+                          : "text-zinc-400 hover:bg-zinc-800/20 hover:text-zinc-300"}
+                        ${collapsed ? "justify-center" : ""}
+                      `}
+                    >
+                      <span className={isActive(item.path) ? "text-emerald-400" : "text-zinc-500"}>{item.icon}</span>
+                      {!collapsed && <span>{item.title}</span>}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </nav>
+
+        {/* User Profile */}
+        <div className="p-4 border-t border-emerald-900/30">
+          <div className={`flex ${collapsed ? "justify-center" : "items-center space-x-3"}`}>
+            {collapsed ? (
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-medium">
+                {user?.name?.charAt(0) || "U"}
+              </div>
+            ) : (
+              <>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-medium">
+                  {user?.name?.charAt(0) || "U"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">{user?.name || "User"}</p>
+                  <p className="text-xs text-zinc-400 truncate">{user?.email || "user@example.com"}</p>
+                </div>
+                <LogOut size={18} className="text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors" />
+              </>
+            )}
+          </div>
+        </div>
       </aside>
     </>
   );
