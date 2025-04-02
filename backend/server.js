@@ -66,6 +66,9 @@ app.use("/api/notifications", notificationRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
+app.get("/", (req, res) => {
+  res.send("Server is running!");
+});
 // Export io instance for WebSocket events in routes
 module.exports = { app,io };
 
