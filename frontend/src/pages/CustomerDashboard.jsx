@@ -5,35 +5,6 @@ import { Loader2, Package, Truck, MapPin, Edit3, Save, User, ShieldCheck, Chevro
 import Sidebar from "../components/Sidebar";
 
 const CustomerDashboard = () => {
-  const downloadInvoice = async (orderId) => {
-    try {
-      const response = await fetch(`/api/orders/${orderId}/invoice`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/pdf",
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to download invoice.");
-      }
-  
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Invoice-${orderId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-  
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading invoice:", error);
-    }
-  };
-  
   const dispatch = useDispatch();
   const { orders, tracking, profile, loading, error } = useSelector((state) => state.customer);
   const [trackingId, setTrackingId] = useState("");
@@ -203,21 +174,42 @@ const CustomerDashboard = () => {
                         </thead>
                         <tbody>
                           {orders.map((order, index) => (
-                            <tr key={order._id} className="border-b hover:bg-emerald-50 transition-colors duration-150">
-                              <td className="py-4 px-4 font-medium">#{order._id}</td>
-                              <td className="py-4 px-4 text-zinc-600">{new Date(order.date).toLocaleDateString()}</td>
+                            <tr 
+                              key={order._id} 
+                              className={`border-b hover:bg-emerald-50 transition-colors duration-150 ${
+                                index === orders.length - 1 ? 'border-none' : ''
+                              }`}
+                            >
                               <td className="py-4 px-4">
-                                <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusBadgeStyle(order.orderStatus)}`}>
+                                <span className="font-medium">#{order._id.substring(0, 8)}</span>
+                              </td>
+                              <td className="py-4 px-4 text-zinc-600">
+                                {new Date().toLocaleDateString()}
+                              </td>
+                              <td className="py-4 px-4">
+                                <span 
+                                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                    getStatusBadgeStyle(order.orderStatus)
+                                  }`}
+                                >
                                   {order.orderStatus}
                                 </span>
                               </td>
-                              <td className="py-4 px-4 text-zinc-700 font-semibold">₹{order.total.toFixed(2)}</td>
+                              <td className="py-4 px-4">
+                                <div className="flex items-center">
+                                  <DollarSign className="w-4 h-4 text-emerald-600 mr-1" />
+                                  <span className="font-semibold">
+                                    {order.totalAmount.toLocaleString()}
+                                  </span>
+                                </div>
+                              </td>
                               <td className="py-4 px-4 text-right">
-                                <button 
-                                  onClick={() => downloadInvoice(order._id)}
-                                  className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200"
+                                <button
+                                  className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg text-sm hover:from-emerald-700 hover:to-teal-700 transform transition-transform duration-200 hover:scale-105 shadow-md"
+                                  onClick={() => setTrackingId(order.trackingId)}
                                 >
-                                  Download Invoice
+                                  <Truck className="inline-block w-4 h-4 mr-1" />
+                                  Track
                                 </button>
                               </td>
                             </tr>
