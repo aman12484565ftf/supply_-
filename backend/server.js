@@ -12,6 +12,7 @@ const warehouseRoutes = require("./routes/warehouseRoutes.js");
 const inventoryRoutes = require("./routes/inventoryRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
@@ -21,14 +22,14 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "https://everstock.netlify.app", // Adjust for frontend
+    origin: ["https://everstock.netlify.app","http://localhost:5173"], // Adjust for frontend
     methods: ["GET", "POST", "PUT"],
   },
 });
 
 app.use(cors({
-  origin: "https://everstock.netlify.app", // Your frontend URL
-  credentials: true // Allow credentials
+  origin: ['https://everstock.netlify.app', 'http://localhost:5173'], // Add localhost for dev
+  credentials: true,
 }));
 app.use(express.json());
 
@@ -61,6 +62,7 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/driver", require("./routes/driverRoutes"));
 app.use("/api/customer", customerRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/invoice", invoiceRoutes);
 
 app.get('/ping', (req, res) => {
   console.log('Keep-alive ping received');
