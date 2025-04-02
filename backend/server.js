@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const warehouseRoutes = require("./routes/warehouseRoutes.js");
 const inventoryRoutes = require("./routes/inventoryRoutes");
 const customerRoutes = require("./routes/customerRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
@@ -25,7 +26,10 @@ const io = new Server(server, {
   },
 });
 
-app.use(cors());
+app.use(cors({
+  origin: "https://everstock.netlify.app", // Your frontend URL
+  credentials: true // Allow credentials
+}));
 app.use(express.json());
 
 // WebSocket for real-time shipment tracking
@@ -54,10 +58,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/warehouses", warehouseRoutes);
 app.use("/api/inventory", inventoryRoutes);
-app.use("/api/admin", adminRoutes);
 app.use("/api/driver", require("./routes/driverRoutes"));
 app.use("/api/customer", customerRoutes);
-
+app.use("/api/notifications", notificationRoutes);
 
 // Error Handling Middleware
 app.use(notFound);
