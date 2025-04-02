@@ -66,9 +66,12 @@ app.use("/api/notifications", notificationRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.get("/", (req, res) => {
-  res.send("Server is running!");
+app.get('/ping', (req, res) => {
+  console.log('Keep-alive ping received');
+  res.status(200).send('OK');
 });
+
+
 // Export io instance for WebSocket events in routes
 module.exports = { app,io };
 
