@@ -62,14 +62,15 @@ app.use("/api/driver", require("./routes/driverRoutes"));
 app.use("/api/customer", customerRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-// Error Handling Middleware
-app.use(notFound);
-app.use(errorHandler);
-
 app.get('/ping', (req, res) => {
   console.log('Keep-alive ping received');
   res.status(200).send('OK');
 });
+
+// Error Handling Middleware
+app.use(notFound);
+app.use(errorHandler);
+
 
 
 // Export io instance for WebSocket events in routes
