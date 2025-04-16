@@ -7,7 +7,7 @@ const productSchema = mongoose.Schema(
     category: { type: String, required: true, enum: ["Electronics", "Clothing", "Home", "Grocery", "Other"] },
     price: { type: Number, required: true },
     stock: { type: Number, required: true, default: 0 },
-    lowStockThreshold: { type: Number, default: 5 }, // Quantity available
+    lowStockThreshold: { type: Number, default: 5 },
     status: { type: String, enum: ["Available", "Out of Stock"], default: "Available" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Only admin can add
   },

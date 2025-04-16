@@ -1,298 +1,302 @@
-import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAdminData, fetchRevenueAnalytics } from "../redux/admin/adminSlice";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
-import { ArrowUpRight, ArrowDownRight, TrendingUp, Users, Package, IndianRupee, Archive, ChartBar } from "lucide-react";
+import { 
+  Package, 
+  IndianRupee, 
+  Users, 
+  Archive,
+  ArrowUpRight, 
+  ArrowDownRight,
+  Bell,
+  Search,
+  Calendar,
+  List,
+  Truck,
+  BarChart2,
+  Globe
+} from "lucide-react";
+import Sidebar from "../components/Sidebar";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { orders, revenue = 0, users, stock = 0, loading, error } = useSelector(
     (state) => state.admin || {}
   );
-  const { revenueData = [], loadingnew } = useSelector((state) => state.admin);
+  const { revenueData = [] } = useSelector((state) => state.admin);
   
-  const [animateStats, setAnimateStats] = useState(false);
+  const [selectedView, setSelectedView] = useState('overview');
+  const [searchTerm, setSearchTerm] = useState('');
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
+    dispatch(fetchAdminData());
+    dispatch(fetchRevenueAnalytics());
+    
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
     
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    dispatch(fetchAdminData());
-    dispatch(fetchRevenueAnalytics());
-    setTimeout(() => setAnimateStats(true), 100);
   }, [dispatch]);
   
-  // Calculate total users - handle both array of users and direct number
+  // Calculate total users
   const totalUsers = Array.isArray(users) ? users.length : (typeof users === 'number' ? users : 0);
 
+  // Get recent activities from revenue data
+  const recentActivities = revenueData.length > 0 
+    ? revenueData.slice(0, 5).map((item, index) => ({
+        id: index,
+        title: `${item.month} revenue report`,
+        amount: `₹${item.revenue.toLocaleString()}`,
+        time: `${new Date().getDate() - index} days ago`
+      }))
+    : [
+        { id: 1, title: "New order received", amount: "₹8,400", time: "Just now" },
+        { id: 2, title: "Stock update", amount: "24 items", time: "2 hours ago" },
+        { id: 3, title: "New user registered", amount: "", time: "Yesterday" },
+        { id: 4, title: "Monthly report generated", amount: "", time: "3 days ago" }
+      ];
+
+  // Get total revenue from revenue data
+  const totalRevenue = revenueData.reduce((sum, item) => sum + item.revenue, 0) || revenue;
+
   return (
-    <div className="flex h-screen bg-zinc-50 font-sans">
+    <div className="flex h-screen font-sans">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto relative">
-        {/* Background with depth layers */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-teal-900 to-cyan-900 h-64"
-          style={{ transform: `translateY(${scrollY * 0.1}px)` }}
-        >
-          {/* Geometric shapes for modern aesthetic */}
-          <div className="absolute inset-0 overflow-hidden opacity-20">
-            <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-emerald-400 blur-3xl"
-                 style={{ transform: `translateY(${scrollY * 0.15}px)` }}></div>
-            <div className="absolute top-1/2 -left-32 w-64 h-64 rounded-full bg-cyan-500 blur-3xl"
-                 style={{ transform: `translateY(${-scrollY * 0.2}px)` }}></div>
-            <div className="absolute bottom-20 right-1/3 w-80 h-80 rounded-full bg-teal-400 blur-3xl"
-                 style={{ transform: `translateY(${-scrollY * 0.25}px)` }}></div>
-          </div>
+      <main className="flex-1 overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50">
+        {/* Floating bubbles background */}
+        <div className="absolute inset-0 overflow-hidden opacity-60 pointer-events-none">
+          {[...Array(10)].map((_, i) => (
+            <div 
+              key={i}
+              className="absolute rounded-full bg-blue-200 opacity-40"
+              style={{
+                width: `${Math.random() * 150 + 80}px`,
+                height: `${Math.random() * 150 + 80}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                transform: `translateY(${scrollY * (0.1 + Math.random() * 0.2)}px)`
+              }}
+            ></div>
+          ))}
         </div>
         
-        <div className="relative z-10 p-6">
-          <div className="max-w-7xl mx-auto">
-            <header className="mb-8 pt-6 text-white">
-              <div className="mb-4 inline-flex items-center px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm font-medium tracking-wider">
-                <ChartBar size={16} className="mr-2" />
-                ADMIN CONTROL CENTER
-              </div>
-              <h1 className="text-4xl lg:text-5xl font-bold mb-2">
-                <span className="text-zinc-50 block">Dashboard</span>
-                <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300 bg-clip-text text-transparent">
-                  Analytics & Insights
-                </span>
+        <div className="relative z-10">
+          {/* Top Navigation Bar */}
+          <div className="flex justify-between items-center p-6 backdrop-blur-sm bg-white/70 border-b border-gray-200">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+                Admin Control Panel
               </h1>
-              <p className="text-zinc-300 mt-2">Welcome back! Here's an overview of your business performance</p>
-            </header>
-
-            {loading ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-gray-500">Welcome back, Admin</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
               </div>
-            ) : error ? (
-              <p className="bg-red-500/10 border border-red-500/20 text-red-500 font-semibold text-center p-4 rounded-xl">
+              <button className="relative p-2 rounded-full bg-white hover:bg-gray-100 transition-colors shadow-sm">
+                <Bell size={20} className="text-gray-600" />
+                <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-red-500"></span>
+              </button>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : error ? (
+            <div className="p-6">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-500 text-center">
                 Error: {error}
-              </p>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 mt-16">
-                  <StatCard 
-                    title="Total Orders" 
-                    value={typeof orders === 'number' ? orders : 0} 
-                    change="+12.5%" 
-                    isPositive={true} 
-                    icon={<Package size={24} className="text-white" />} 
-                    delay={0} 
-                    animate={animateStats}
-                    color="emerald" 
-                  />
-                  <StatCard 
-                    title="Total Revenue" 
-                    value={`₹${(typeof revenue === 'number' ? revenue : 0).toLocaleString()}`} 
-                    change="+8.2%" 
-                    isPositive={true} 
-                    icon={<IndianRupee size={24} className="text-white" />} 
-                    delay={100} 
-                    animate={animateStats}
-                    color="teal" 
-                  />
-                  <StatCard 
-                    title="Total Users" 
-                    value={totalUsers} 
-                    change="+5.3%" 
-                    isPositive={true} 
-                    icon={<Users size={24} className="text-white" />} 
-                    delay={200} 
-                    animate={animateStats}
-                    color="cyan" 
-                  />
-                  <StatCard 
-                    title="Available Stock" 
-                    value={typeof stock === 'number' ? stock : 0} 
-                    change="-2.4%" 
-                    isPositive={false} 
-                    icon={<Archive size={24} className="text-white" />} 
-                    delay={300} 
-                    animate={animateStats}
-                    color="emerald" 
-                  />
+              </div>
+            </div>
+          ) : (
+            <div className="p-6">
+              {/* View Selection Tabs */}
+              <div className="flex border-b border-gray-200 mb-6 bg-white/80 backdrop-blur-sm rounded-t-xl px-2 pt-2">
+                {['overview', 'orders', 'users', 'inventory'].map((tab) => (
+                  <button
+                    key={tab}
+                    className={`px-6 py-3 font-medium rounded-t-lg transition-all ${
+                      selectedView === tab 
+                        ? 'text-indigo-600 bg-gradient-to-b from-white to-indigo-50 shadow-sm border-t border-l border-r border-gray-200' 
+                        : 'text-gray-500 hover:text-indigo-600'
+                    }`}
+                    onClick={() => setSelectedView(tab)}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Quick Stats Row */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <QuickStatCard
+                  title="Orders"
+                  value={typeof orders === 'number' ? orders : 0}
+                  change="+12.5%"
+                  isPositive={true}
+                  icon={<Package size={20} />}
+                  color="indigo"
+                />
+                <QuickStatCard
+                  title="Revenue"
+                  value={`₹${(totalRevenue).toLocaleString()}`}
+                  change="+8.2%"
+                  isPositive={true}
+                  icon={<IndianRupee size={20} />}
+                  color="green"
+                />
+                <QuickStatCard
+                  title="Users"
+                  value={totalUsers}
+                  change="+5.3%"
+                  isPositive={true}
+                  icon={<Users size={20} />}
+                  color="blue"
+                />
+                <QuickStatCard
+                  title="Stock"
+                  value={typeof stock === 'number' ? stock : 0}
+                  change="-2.4%"
+                  isPositive={false}
+                  icon={<Archive size={20} />}
+                  color="amber"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Activity Feed with Glass Effect */}
+                <div className="lg:col-span-2 bg-white/80 backdrop-blur-lg rounded-xl shadow-lg border border-white/50 p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-lg font-semibold text-gray-800">Recent Activity</h2>
+                    <div className="flex items-center gap-2 text-sm text-indigo-600 bg-indigo-50 py-1 px-3 rounded-lg">
+                      <Calendar size={16} />
+                      <span>Last 7 days</span>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {recentActivities.map((activity) => (
+                      <div key={activity.id} className="flex items-center p-3 hover:bg-indigo-50/70 rounded-lg transition-colors border-b border-gray-100 last:border-0">
+                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4 shadow-sm">
+                          <List size={18} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-800">{activity.title}</div>
+                          <div className="text-xs text-gray-500">{activity.time}</div>
+                        </div>
+                        {activity.amount && (
+                          <div className="text-sm font-semibold text-indigo-600">
+                            {activity.amount}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <button className="mt-6 w-full py-3 text-center text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-lg shadow-md hover:shadow-indigo-300/30 font-medium flex items-center justify-center group">
+                    View All Activity
+                    <ArrowUpRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                  <ChartCard 
-                    title="Sales Analytics" 
-                    subtitle="Monthly revenue from orders" 
-                    chartType="bar" 
-                    data={revenueData} 
-                    loading={loadingnew}
-                    className="lg:col-span-2" 
-                  />
-                  <ChartCard 
-                    title="Revenue Trend" 
-                    subtitle="Last 6 months" 
-                    chartType="line" 
-                    data={revenueData} 
-                    loading={loadingnew} 
-                  />
-                </div>
-
-                <div className="bg-white shadow-lg rounded-2xl p-6 border border-zinc-100 mb-8">
-                  <h2 className="text-xl font-semibold text-zinc-800 mb-4">Quick Actions</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Quick Actions Panel with Glass Effect */}
+                <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg border border-white/50 p-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-6">Quick Actions</h2>
+                  <div className="space-y-3">
                     {[
-                      { label: "Run Reports", icon: <TrendingUp size={20} /> },
-                      { label: "Manage Inventory", icon: <Archive size={20} /> },
-                      { label: "User Analytics", icon: <Users size={20} /> },
-                      { label: "Order Processing", icon: <Package size={20} /> },
+                      { title: "Add New Product", icon: <Package size={18} />, color: "bg-blue-100 text-blue-600" },
+                      { title: "Process Orders", icon: <List size={18} />, color: "bg-indigo-100 text-indigo-600" },
+                      { title: "Generate Reports", icon: <BarChart2 size={18} />, color: "bg-green-100 text-green-600" },
+                      { title: "View Analytics", icon: <Globe size={18} />, color: "bg-amber-100 text-amber-600" }
                     ].map((action, index) => (
                       <button 
                         key={index}
-                        className="flex items-center justify-center gap-2 p-4 bg-zinc-50 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 rounded-xl border border-zinc-200 transition-all hover:shadow-md group"
+                        className="flex items-center w-full p-3 rounded-lg hover:bg-indigo-50/70 transition-colors"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white transform transition-all duration-300 group-hover:rotate-6">
+                        <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center mr-3 shadow-sm`}>
                           {action.icon}
                         </div>
-                        <span className="font-medium text-zinc-700">{action.label}</span>
+                        <span className="font-medium text-gray-700">{action.title}</span>
                       </button>
                     ))}
                   </div>
+                  <div className="mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                    <h3 className="text-sm font-semibold text-indigo-800 mb-2">System Status</h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-sm text-gray-600">All systems operational</span>
+                    </div>
+                  </div>
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+              
+              {/* Dashboard Overview */}
+              <div className="mt-8 bg-white/80 backdrop-blur-lg rounded-xl shadow-lg border border-white/50 p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-lg font-semibold text-gray-800">Logistics Performance</h2>
+                  <div className="flex gap-3">
+                    <button className="text-sm bg-indigo-600 text-white py-1 px-4 rounded-md">Monthly</button>
+                    <button className="text-sm bg-white text-gray-600 py-1 px-4 rounded-md shadow-sm">Weekly</button>
+                    <button className="text-sm bg-white text-gray-600 py-1 px-4 rounded-md shadow-sm">Daily</button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 h-60 flex items-center justify-center">
+                    <div className="text-center">
+                      <Truck size={48} className="mx-auto text-indigo-400 mb-3" />
+                      <p className="text-gray-600">Revenue chart would render here</p>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 h-60 flex items-center justify-center">
+                    <div className="text-center">
+                      <BarChart2 size={48} className="mx-auto text-blue-400 mb-3" />
+                      <p className="text-gray-600">Order trends would render here</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
   );
 };
 
-const StatCard = ({ title, value, change, isPositive, icon, delay, animate, color }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const getGradient = () => {
+const QuickStatCard = ({ title, value, change, isPositive, icon, color }) => {
+  const getColorClasses = () => {
     switch(color) {
-      case 'emerald': return 'from-emerald-500 to-emerald-600';
-      case 'teal': return 'from-teal-500 to-teal-600';
-      case 'cyan': return 'from-cyan-500 to-cyan-600';
-      default: return 'from-emerald-500 to-emerald-600';
+      case 'indigo': return 'from-indigo-500 to-indigo-600 shadow-indigo-200';
+      case 'green': return 'from-green-500 to-green-600 shadow-green-200';
+      case 'blue': return 'from-blue-500 to-blue-600 shadow-blue-200';
+      case 'amber': return 'from-amber-500 to-amber-600 shadow-amber-200';
+      default: return 'from-indigo-500 to-indigo-600 shadow-indigo-200';
     }
   };
 
   return (
-    <div 
-      className={`p-6 bg-white shadow-lg rounded-2xl hover:shadow-xl transition-all duration-500 transform ${
-        animate ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-      } ${isHovered ? "-translate-y-1" : ""} border border-zinc-100 relative overflow-hidden`}
-      style={{ transitionDelay: `${delay}ms` }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="flex justify-between items-start mb-4">
-        <div className={`p-3 rounded-lg bg-gradient-to-r ${getGradient()} transform transition-all duration-500 ${
-          isHovered ? "rotate-6 scale-110" : ""
-        }`}>
+    <div className="bg-white/80 backdrop-blur-lg p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-white/50">
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${getColorClasses()} flex items-center justify-center text-white shadow-md`}>
           {icon}
         </div>
-        <div className={`flex items-center ${isPositive ? "text-emerald-500" : "text-red-500"}`}>
-          <span className="text-sm font-medium">{change}</span>
-          {isPositive ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+        <div className={`flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'} bg-white py-1 px-2 rounded-full text-xs shadow-sm`}>
+          <span className="font-medium">{change}</span>
+          {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
         </div>
       </div>
-      <h2 className="text-lg font-medium text-zinc-600">{title}</h2>
-      <p className="text-3xl font-bold text-zinc-800 mt-1">{value}</p>
-      <div className={`mt-4 h-1 w-16 bg-gradient-to-r ${getGradient()} rounded-full transition-all duration-500 ${
-        isHovered ? "w-3/4" : ""
-      }`}></div>
-    </div>
-  );
-};
-
-const ChartCard = ({ title, subtitle, chartType, data, loading, className = "" }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div 
-      className={`p-6 bg-white shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 border border-zinc-100 ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-xl font-semibold text-zinc-800">{title}</h2>
-          <p className="text-zinc-500">{subtitle}</p>
-        </div>
-        <div className={`p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-white transform transition-all duration-500 ${isHovered ? "rotate-6 scale-110" : ""}`}>
-          <ChartBar size={20} />
-        </div>
-      </div>
-      {loading ? (
-        <div className="flex items-center justify-center h-40">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : data.length === 0 ? (
-        <div className="flex items-center justify-center h-40 text-zinc-500">No data available</div>
-      ) : (
-        <ResponsiveContainer width="100%" height={300}>
-          {chartType === "bar" ? (
-            <BarChart data={data}>
-              <XAxis dataKey="month" axisLine={false} tickLine={false} />
-              <YAxis axisLine={false} tickLine={false} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                  borderRadius: '0.5rem',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
-                {data.map((entry, index) => (
-                  <rect key={`cell-${index}`} fill={`url(#barGradient-${index})`} />
-                ))}
-              </Bar>
-              <defs>
-                {data.map((entry, index) => (
-                  <linearGradient key={`gradient-${index}`} id={`barGradient-${index}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.8}/>
-                    <stop offset="100%" stopColor="#0d9488" stopOpacity={0.8}/>
-                  </linearGradient>
-                ))}
-              </defs>
-            </BarChart>
-          ) : (
-            <LineChart data={data}>
-              <XAxis dataKey="month" axisLine={false} tickLine={false} />
-              <YAxis axisLine={false} tickLine={false} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                  borderRadius: '0.5rem',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
-                  <stop offset="100%" stopColor="#0d9488" stopOpacity={1}/>
-                </linearGradient>
-              </defs>
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="url(#colorRevenue)" 
-                strokeWidth={3} 
-                dot={{ r: 6, strokeWidth: 3, fill: "white", stroke: "#10b981" }} 
-                activeDot={{ r: 8, strokeWidth: 3, fill: "white", stroke: "#10b981" }}
-              />
-            </LineChart>
-          )}
-        </ResponsiveContainer>
-      )}
+      <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+      <p className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mt-1">{value}</p>
     </div>
   );
 };

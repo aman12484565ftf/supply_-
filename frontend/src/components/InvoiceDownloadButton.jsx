@@ -3,7 +3,7 @@ import React from "react";
 const InvoiceDownloadButton = ({ invoiceId }) => {
   const handleDownload = async () => {
     try {
-      const response = await fetch(`https://supplychainpro.onrender.com/api/invoice/${invoiceId}/download`, {
+      const response = await fetch(`http://localhost:5000/api/invoice/${invoiceId}/download`, {
         method: "GET",
         headers: {
           "Content-Type": "application/pdf",

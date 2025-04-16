@@ -4,7 +4,7 @@ const API_URL = "http://localhost:5000/api/orders";
 
 // 📌 Fetch assigned deliveries for the driver
 export const getDriverOrders = async (token) => {
-  const response = await fetch("https://supplychainpro.onrender.com/api/driver/deliveries", {
+  const response = await fetch("http://localhost:5000/api/driver/deliveries", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +20,7 @@ export const getDriverOrders = async (token) => {
 };
 
 export const updateDeliveryStatus = async (token, deliveryId, status, location, otp) => {
-  const response = await fetch(`https://supplychainpro.onrender.com/api/driver/deliveries/${deliveryId}`, {
+  const response = await fetch(`http://localhost:5000/api/driver/deliveries/${deliveryId}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,

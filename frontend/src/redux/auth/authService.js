@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "https://supplychainpro.onrender.com/api/users"; // Update with your backend URL
+const API_URL = "http://localhost:5000/api/users"; // Update with your backend URL
 
 // 📌 Register User
 const register = async (userData) => {
-  const response = await axios.post(`${API_URL}/register`, userData);
+  const response = await axios.post(`http://localhost:5000/api/users/register`, userData);
   if (response.data) {
     localStorage.setItem("user", JSON.stringify(response.data)); // Store token in localStorage
   }
@@ -13,7 +13,7 @@ const register = async (userData) => {
 
 // 📌 Login User
 const login = async (userData) => {
-  const response = await axios.post(`${API_URL}/login`, userData);
+  const response = await axios.post(`http://localhost:5000/api/users/login`, userData);
   if (response.data) {
     localStorage.setItem("user", JSON.stringify(response.data));
   }

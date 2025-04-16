@@ -46,13 +46,13 @@ const AddProductModal = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-900/70 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
       <div 
         className="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 ease-out scale-100 p-0 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header with emerald gradient to match sidebar */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6">
+        {/* Header with black gradient */}
+        <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
@@ -74,16 +74,16 @@ const AddProductModal = ({ onClose }) => {
           <div className="space-y-5">
             {/* Product Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+              <label className="block text-sm font-medium text-gray-800 mb-1">Product Name</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Tag size={18} className="text-emerald-500" />
+                  <Tag size={18} className="text-gray-600" />
                 </div>
                 <input 
                   type="text" 
                   name="name" 
                   placeholder="Enter product name" 
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition-all" 
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-gray-800 focus:border-gray-800 transition-all" 
                   onChange={handleChange} 
                   required 
                 />
@@ -93,22 +93,22 @@ const AddProductModal = ({ onClose }) => {
             {/* SKU & Category - 2 column layout */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+                <label className="block text-sm font-medium text-gray-800 mb-1">SKU</label>
                 <input 
                   type="text" 
                   name="sku" 
                   placeholder="SKU" 
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition-all" 
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-gray-800 focus:border-gray-800 transition-all" 
                   onChange={handleChange}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <label className="block text-sm font-medium text-gray-800 mb-1">Category</label>
                 <input 
                   type="text" 
                   name="category" 
                   placeholder="Category" 
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition-all" 
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-gray-800 focus:border-gray-800 transition-all" 
                   onChange={handleChange} 
                   required 
                 />
@@ -118,27 +118,27 @@ const AddProductModal = ({ onClose }) => {
             {/* Stock & Price - 2 column layout */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+                <label className="block text-sm font-medium text-gray-800 mb-1">Stock Quantity</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <BarChart2 size={18} className="text-emerald-500" />
+                    <BarChart2 size={18} className="text-gray-600" />
                   </div>
                   <input 
                     type="number" 
                     name="stock" 
                     placeholder="0" 
                     min="0" 
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition-all" 
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-gray-800 focus:border-gray-800 transition-all" 
                     onChange={handleChange} 
                     required 
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+                <label className="block text-sm font-medium text-gray-800 mb-1">Price (₹)</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <DollarSign size={18} className="text-emerald-500" />
+                    <DollarSign size={18} className="text-gray-600" />
                   </div>
                   <input 
                     type="number" 
@@ -146,7 +146,7 @@ const AddProductModal = ({ onClose }) => {
                     placeholder="0.00" 
                     min="0" 
                     step="0.01" 
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition-all" 
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-gray-800 focus:border-gray-800 transition-all" 
                     onChange={handleChange} 
                     required 
                   />
@@ -156,12 +156,12 @@ const AddProductModal = ({ onClose }) => {
             
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-800 mb-1">Description</label>
               <textarea
                 name="description"
                 rows="3"
                 placeholder="Product description"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-gray-800 focus:border-gray-800 transition-all"
                 onChange={handleChange}
               ></textarea>
             </div>
@@ -178,7 +178,7 @@ const AddProductModal = ({ onClose }) => {
             </button>
             <button 
               type="submit" 
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:-translate-y-1"
+              className="flex-1 px-4 py-3 bg-black text-white rounded-lg hover:shadow-lg hover:shadow-black/20 transition-all duration-300 transform hover:-translate-y-1"
             >
               Add Product
             </button>

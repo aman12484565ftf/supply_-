@@ -22,15 +22,21 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "https://everstock.netlify.app", // Adjust for frontend
+    origin: "*", // Allow all origins
     methods: ["GET", "POST", "PUT"],
-  },
+    credentials: false // No credentials needed
+  }
 });
 
+// app.use(cors({
+//   origin: "http://localhost:5173", // Your frontend URL
+//   credentials: true // Allow credentials
+// }));
 app.use(cors({
-  origin: "https://everstock.netlify.app", // Your frontend URL
-  credentials: true // Allow credentials
+  origin: "http://localhost:5173",
+  credentials: true
 }));
+
 app.use(express.json());
 
 // WebSocket for real-time shipment tracking
@@ -54,8 +60,9 @@ io.on("connection", (socket) => {
 
 // Routes
 app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes); // Fixed duplicate order route
+app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
+// app.use(userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/warehouses", warehouseRoutes);
 app.use("/api/inventory", inventoryRoutes);
