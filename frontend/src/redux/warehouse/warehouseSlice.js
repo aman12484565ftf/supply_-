@@ -17,7 +17,7 @@ export const fetchWarehouseStats = createAsyncThunk(
 // ✅ Fetch List of Warehouses
 export const fetchWarehouses = createAsyncThunk("warehouse/fetchWarehouses", async (_, thunkAPI) => {
   try {
-    const response = await axios.get("https://logitrackpro.netlify.app/api/warehouses");
+    const response = await axios.get("https://logitrackplus.netlify.app/api/warehouses");
     
     if (!Array.isArray(response.data)) {
       throw new Error("Invalid response: Expected an array.");

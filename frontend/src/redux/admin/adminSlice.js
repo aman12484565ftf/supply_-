@@ -28,7 +28,7 @@ export const fetchUsers = createAsyncThunk("admin/fetchUsers", async (_, thunkAP
     const token = thunkAPI.getState().auth.user?.token;
     const config = { headers: { Authorization: `Bearer ${token}` } };
     
-    const response = await axios.get("https://logitrackpro.netlify.app/api/admin/users", config);
+    const response = await axios.get("https://logitrackplus.netlify.app/api/admin/users", config);
     console.log("✅ Fetched Users:", response.data); // 🔍 Debugging
 
     return response.data;

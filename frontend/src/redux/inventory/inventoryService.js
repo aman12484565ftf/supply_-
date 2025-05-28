@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://logitrackpro.netlify.app/api/inventory"; // Adjust the endpoint as per your backend
+const API_URL = "https://logitrackplus.netlify.app/api/inventory"; // Adjust the endpoint as per your backend
 
 // Fetch all inventory items
 export const getInventory = async (token) => {
@@ -15,7 +15,7 @@ export const addProduct = async (productData, token) => {
   
     console.log("📤 Sending to API:", productData);
   
-    const response = await fetch(`https://logitrackpro.netlify.app/api/inventory`, {
+    const response = await fetch(`https://logitrackplus.netlify.app/api/inventory`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export const addProduct = async (productData, token) => {
 export const updateProduct = async (id, updatedData, token) => {
     if (!id) throw new Error("Missing product ID");
   
-    const response = await fetch(`https://logitrackpro.netlify.app/api/inventory/${id}`, {  // ✅ Ensure Correct Backend URL
+    const response = await fetch(`https://logitrackplus.netlify.app/api/inventory/${id}`, {  // ✅ Ensure Correct Backend URL
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
