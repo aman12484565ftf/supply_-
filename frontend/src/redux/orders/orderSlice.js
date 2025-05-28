@@ -35,7 +35,7 @@ export const placeOrder = createAsyncThunk("orders/placeOrder", async (orderData
       const token = thunkAPI.getState().auth.user?.token;
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
-      const response = await axios.post("http://localhost:5000/api/orders", orderData, config);
+      const response = await axios.post("https://logitrackpro.netlify.app/api/orders", orderData, config);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to place order");

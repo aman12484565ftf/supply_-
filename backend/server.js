@@ -29,11 +29,11 @@ const io = new Server(server, {
 });
 
 // app.use(cors({
-//   origin: "http://localhost:5173", // Your frontend URL
+//   origin: "https://logitrack-o2rk.onrender.com", // Your frontend URL
 //   credentials: true // Allow credentials
 // }));
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://logitrack-o2rk.onrender.com",
   credentials: true
 }));
 

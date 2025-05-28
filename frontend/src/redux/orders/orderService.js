@@ -1,12 +1,14 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/orders"; // Adjust if needed
+const API_URL = "https://logitrackpro.netlify.app/api/orders"; // Adjust if needed
 
 // ✅ Get all orders
 const getOrders = async (token) => {
   const config = { headers: { Authorization: `Bearer ${token}` } };
   const response = await axios.get(API_URL, config);
+  // console.log(response);
   return response.data;
+  
 };
 
 // ✅ Update order status

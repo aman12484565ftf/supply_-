@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 
-const OrderDashboard = () => {
+const OrderDashboard = () => {  
   const dispatch = useDispatch();
   const { orders, loading, error } = useSelector((state) => state.orders);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -63,7 +63,7 @@ const OrderDashboard = () => {
   const pendingOrders = orders?.filter(order => order.orderStatus === "Processing").length || 0;
   const deliveredOrders = orders?.filter(order => order.orderStatus === "Delivered").length || 0;
   const totalRevenue = orders?.reduce((sum, order) => sum + order.totalAmount, 0) || 0;
-
+console.log(orders);
   // Get recent activities from orders
   const recentActivities = orders?.slice(0, 5).map((order) => ({
     id: order._id,

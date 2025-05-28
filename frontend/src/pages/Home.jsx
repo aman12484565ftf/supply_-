@@ -381,6 +381,7 @@ const Home = () => {
                 </div>
                 LogiTrack
               </div>
+              
               <p className="mb-6">
                 Revolutionizing supply chain management with cutting-edge technology and seamless integration.
               </p>
