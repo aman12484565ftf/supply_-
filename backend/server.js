@@ -22,7 +22,7 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins
+    origin: "https://logitrackplus.netlify.app", // Allow all origins
     methods: ["GET", "POST", "PUT"],
     credentials: false // No credentials needed
   }
