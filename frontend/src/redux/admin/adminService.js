@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://logitrackplus.netlify.app/api/admin"; // Ensure correct base URL
+const API_URL = "https://logitrack-o2rk.onrender.com/api/admin"; // Ensure correct base URL
 
 export const getDashboardStats = async (token) => {
   if (!token) {

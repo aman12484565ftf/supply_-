@@ -10,7 +10,7 @@ export const fetchCustomerOrders = createAsyncThunk(
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       // ✅ Ensure this URL matches the backend
-      const response = await axios.get("https://logitrackplus.netlify.app/api/orders/user", config);
+      const response = await axios.get("https://logitrack-o2rk.onrender.com/api/orders/user", config);
       
       return response.data;
     } catch (error) {
@@ -29,7 +29,7 @@ export const fetchOrderTracking = createAsyncThunk(
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       console.log("📡 Fetching tracking details for:", trackingId);
-      const response = await axios.get(`https://logitrackplus.netlify.app/api/orders/track/${trackingId}`, config);
+      const response = await axios.get(`https://logitrack-o2rk.onrender.com/api/orders/track/${trackingId}`, config);
       console.log("✅ Tracking data received:", response.data);
 
       return response.data;
@@ -49,7 +49,7 @@ export const updateCustomerProfile = createAsyncThunk(
       const config = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
 
       console.log("📡 Updating customer profile...");
-      const response = await axios.put("https://logitrackplus.netlify.app/api/customer/profile", userData, config);
+      const response = await axios.put("https://logitrack-o2rk.onrender.com/api/customer/profile", userData, config);
       console.log("✅ Profile updated:", response.data);
 
       return response.data;

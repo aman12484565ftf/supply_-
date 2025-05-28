@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const API_URL = "https://logitrackplus.netlify.app/api/customer"; // Adjust API URL if needed
+const API_URL = "https://logitrack-o2rk.onrender.com/api/customer"; // Adjust API URL if needed
 
 // Fetch customer orders
 export const getCustomerOrders = async () => {
   "customer/fetchOrders",
     async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("https://logitrackplus.netlify.app/api/customer/orders", {
+      const response = await fetch("https://logitrack-o2rk.onrender.com/api/customer/orders", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // Ensure authentication cookies are sent
@@ -31,7 +31,7 @@ export const getCustomerOrders = async () => {
     "customer/fetchOrders",
     async (_, { rejectWithValue }) => {
       try {
-        const response = await fetch("https://logitrackplus.netlify.app/api/customer/orders", {
+        const response = await fetch("https://logitrack-o2rk.onrender.com/api/customer/orders", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           credentials: "include", // Ensure authentication cookies are sent

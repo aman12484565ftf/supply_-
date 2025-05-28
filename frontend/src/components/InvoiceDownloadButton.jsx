@@ -3,7 +3,7 @@ import React from "react";
 const InvoiceDownloadButton = ({ invoiceId }) => {
   const handleDownload = async () => {
     try {
-      const response = await fetch(`https://logitrackplus.netlify.app/api/invoice/${invoiceId}/download`, {
+      const response = await fetch(`https://logitrack-o2rk.onrender.com/api/invoice/${invoiceId}/download`, {
         method: "GET",
         headers: {
           "Content-Type": "application/pdf",

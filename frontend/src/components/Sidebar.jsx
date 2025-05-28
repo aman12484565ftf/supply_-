@@ -32,7 +32,7 @@ const Sidebar = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   // API base URL - adjust this based on your environment setup
-  const API_BASE_URL = 'https://logitrackplus.netlify.app/api'
+  const API_BASE_URL = 'https://logitrack-o2rk.onrender.com/api'
 
   useEffect(() => {
     const fetchNotifications = async () => {

@@ -29,11 +29,11 @@ const io = new Server(server, {
 });
 
 // app.use(cors({
-//   origin: "https://logitrack-o2rk.onrender.com", // Your frontend URL
+//   origin: "https://logitrackplus.netlify.app", // Your frontend URL
 //   credentials: true // Allow credentials
 // }));
 app.use(cors({
-  origin: "https://logitrack-o2rk.onrender.com",
+  origin: "https://logitrackplus.netlify.app",
   credentials: true
 }));
 

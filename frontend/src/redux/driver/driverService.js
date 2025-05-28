@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "https://logitrackplus.netlify.app/api/orders";
+const API_URL = "https://logitrack-o2rk.onrender.com/api/orders";
 
 // 📌 Fetch assigned deliveries for the driver
 export const getDriverOrders = async (token) => {
-  const response = await fetch("https://logitrackplus.netlify.app/api/driver/deliveries", {
+  const response = await fetch("https://logitrack-o2rk.onrender.com/api/driver/deliveries", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +20,7 @@ export const getDriverOrders = async (token) => {
 };
 
 export const updateDeliveryStatus = async (token, deliveryId, status, location, otp) => {
-  const response = await fetch(`https://logitrackplus.netlify.app/api/driver/deliveries/${deliveryId}`, {
+  const response = await fetch(`https://logitrack-o2rk.onrender.com/api/driver/deliveries/${deliveryId}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
